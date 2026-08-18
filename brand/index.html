@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TSB Labs Brand Toolkit</title>
+<meta name="description" content="The TSB Labs brand toolkit: logo system, color, typography, graphic language, voice and downloadable assets.">
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%233d6ef7'/%3E%3Ctext x='32' y='42' font-family='Menlo,monospace' font-size='26' font-weight='700' fill='%23fbfaf8' text-anchor='middle'%3ETSB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#3d6ef7;
+  --bright:#6a92ff;
+  --tint:#eef3ff;
+  --ink:#0b0e14;
+  --card:#151b28;
+  --paper:#fbfaf8;
+  --body:#a7b1c5;
+  --line:rgba(106,146,255,.16);
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+::selection{background:var(--blue);color:var(--paper)}
+body{background:var(--ink);color:var(--body);font-family:var(--sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(61,110,247,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(61,110,247,.05) 1px,transparent 1px),
+    linear-gradient(rgba(61,110,247,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(61,110,247,.025) 1px,transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px;
+}
+.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 24px}
+a{color:var(--bright);text-decoration:none}
+a:hover{color:var(--tint)}
+nav{position:sticky;top:0;z-index:10;background:rgba(11,14,20,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;max-width:980px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.monogram{width:40px;height:40px;border-radius:9px;flex:none;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:13px;color:var(--paper);letter-spacing:.04em}
+.wordmark{line-height:1.15}
+.wordmark b{display:block;color:var(--paper);font-weight:800;font-size:15px;letter-spacing:.12em}
+.wordmark span{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;color:var(--bright)}
+.back{font-family:var(--mono);font-size:11.5px;letter-spacing:.12em}
+header{padding:90px 0 70px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:11.5px;letter-spacing:.2em;color:var(--bright);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.kicker::before{content:"";width:26px;height:1px;background:var(--blue);flex:none}
+h1{color:var(--paper);font-weight:800;letter-spacing:-.02em;font-size:clamp(30px,4.6vw,48px);line-height:1.1}
+.sub{max-width:620px;margin-top:20px;font-size:16.5px}
+section{padding:76px 0;border-bottom:1px solid var(--line);scroll-margin-top:76px}
+h2{color:var(--paper);font-weight:800;font-size:clamp(22px,3vw,30px);letter-spacing:-.015em;margin-top:10px}
+.sec-note{max-width:600px;margin-top:12px;font-size:15px}
+h3{color:var(--tint);font-size:15px;font-weight:700;margin:34px 0 12px;letter-spacing:.01em}
+p{font-size:15px}
+.rule-list{margin-top:10px;display:grid;gap:8px}
+.rule-list div{display:flex;gap:12px;font-size:14.5px}
+.rule-list div::before{content:"//";font-family:var(--mono);color:var(--blue);font-weight:500;flex:none}
+/* logo tiles */
+.logo-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+@media(max-width:720px){.logo-grid{grid-template-columns:1fr}}
+.logo-tile{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.logo-tile .stage{display:flex;align-items:center;justify-content:center;padding:38px 20px}
+.logo-tile .stage.dark{background:var(--ink)}
+.logo-tile .stage.light{background:var(--paper)}
+.logo-tile .cap{border-top:1px solid var(--line);background:var(--card);padding:12px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--body)}
+.logo-tile img{max-width:100%;height:auto;display:block}
+.logo-tile .stage .mono-lg{width:120px;height:120px;border-radius:24px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:40px;color:var(--paper)}
+/* colors */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:22px}
+.swatch{border:1px solid var(--line);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s ease,border-color .15s ease}
+.swatch:hover{transform:translateY(-2px);border-color:rgba(106,146,255,.4)}
+.swatch .color{height:86px}
+.swatch .meta{background:var(--card);padding:12px 16px}
+.swatch .meta b{display:block;color:var(--paper);font-size:13.5px;font-weight:700}
+.swatch .meta code{font-family:var(--mono);font-size:11.5px;color:var(--bright);letter-spacing:.06em}
+.swatch .meta span{display:block;font-size:12px;margin-top:4px;color:var(--body)}
+.copied{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--blue);color:var(--paper);font-family:var(--mono);font-size:12px;letter-spacing:.08em;padding:9px 18px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:50}
+.copied.show{opacity:1}
+/* type */
+.type-card{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:28px;margin-top:18px}
+.type-card .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--bright);margin-bottom:14px}
+.spec-inter-1{font-family:var(--sans);font-weight:800;font-size:34px;color:var(--paper);letter-spacing:-.02em;line-height:1.15}
+.spec-inter-2{font-family:var(--sans);font-weight:600;font-size:18px;color:var(--tint);margin-top:10px}
+.spec-inter-3{font-family:var(--sans);font-weight:400;font-size:15px;margin-top:10px}
+.spec-mono-1{font-family:var(--mono);font-weight:700;font-size:16px;color:var(--paper);letter-spacing:.06em;margin-top:4px}
+.spec-mono-2{font-family:var(--mono);font-weight:500;font-size:11.5px;color:var(--bright);letter-spacing:.2em;text-transform:uppercase;margin-top:10px}
+/* graphic language */
+.gl-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+@media(max-width:720px){.gl-grid{grid-template-columns:1fr}}
+.gl{border:1px solid var(--line);border-radius:12px;background:var(--card);padding:24px}
+.gl .label{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;color:var(--bright);margin-bottom:10px}
+.gl p{font-size:14px}
+.gl .demo{margin-top:14px;border:1px dashed rgba(106,146,255,.3);border-radius:8px;padding:16px;font-family:var(--mono);font-size:12px;color:var(--tint);letter-spacing:.08em}
+/* assets */
+.asset-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px}
+.asset{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:12px 18px;font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--tint);transition:border-color .15s ease,transform .15s ease}
+.asset:hover{border-color:var(--bright);transform:translateY(-1px);color:var(--tint)}
+.asset::before{content:"\2193";color:var(--bright);font-weight:700}
+footer{padding:40px 0 60px;font-size:12.5px;color:rgba(167,177,197,.65)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="brand">
+      <div class="monogram">TSB</div>
+      <div class="wordmark"><b>TSB LABS</b><span>BRAND TOOLKIT</span></div>
+    </div>
+    <a class="back" href="/">&larr; BACK TO SITE</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">Brand toolkit · Reference v1</div>
+    <h1>One identity, applied the same way every time.</h1>
+    <p class="sub">This page is the single source of truth for how TSB Labs looks, sounds and writes. It covers the logo system, color, typography, graphic language and voice, with downloadable assets at the bottom. When in doubt, copy what is here.</p>
+  </div>
+</header>
+
+<section id="logo">
+  <div class="wrap">
+    <div class="kicker">01 / Logo system</div>
+    <h2>Monogram tile plus wordmark.</h2>
+    <p class="sec-note">The identity is typographic: a blue tile carrying TSB in mono, next to the TSB LABS wordmark with the SYSTEMS FOR THE AI ERA descriptor. There is no pictorial logo, and none should be invented.</p>
+    <div class="logo-grid">
+      <div class="logo-tile">
+        <div class="stage dark"><img src="/assets/tsb-lockup-dark.svg" alt="TSB Labs lockup on dark" width="480"></div>
+        <div class="cap"><span>PRIMARY LOCKUP · ON INK</span><a href="/assets/tsb-lockup-dark.svg" download>SVG</a></div>
+      </div>
+      <div class="logo-tile">
+        <div class="stage light"><img src="/assets/tsb-lockup-light.svg" alt="TSB Labs lockup on light" width="480"></div>
+        <div class="cap"><span>LOCKUP · ON WARM PAPER</span><a href="/assets/tsb-lockup-light.svg" download>SVG</a></div>
+      </div>
+      <div class="logo-tile">
+        <div class="stage dark"><div class="mono-lg">TSB</div></div>
+        <div class="cap"><span>MONOGRAM · APP ICON / AVATAR</span><a href="/assets/tsb-monogram.svg" download>SVG</a></div>
+      </div>
+      <div class="logo-tile">
+        <div class="stage light"><div class="mono-lg">TSB</div></div>
+        <div class="cap"><span>MONOGRAM ON LIGHT · UNCHANGED</span><a href="/assets/tsb-monogram.svg" download>SVG</a></div>
+      </div>
+    </div>
+    <h3>Rules</h3>
+    <div class="rule-list">
+      <div>Clearspace around the lockup is half the tile height on every side.</div>
+      <div>Minimum sizes: tile 24px digital, lockup 140px wide. Below that, use the monogram alone.</div>
+      <div>The tile is always Blueprint Blue with warm paper type. Never recolor, outline or add effects.</div>
+      <div>On photography, place the lockup on an ink panel first. Never directly on a busy image.</div>
+      <div>The descriptor line SYSTEMS FOR THE AI ERA is always mono, uppercase, letterspaced.</div>
+    </div>
+  </div>
+</section>
+
+<section id="color">
+  <div class="wrap">
+    <div class="kicker">02 / Color</div>
+    <h2>Blueprint blue on ink.</h2>
+    <p class="sec-note">Ink dominates. Blue is the working accent, roughly one part in ten. Warm paper is for light documents and for type sitting on blue. Click any swatch to copy its hex.</p>
+    <div class="swatch-grid">
+      <div class="swatch" data-hex="#3d6ef7"><div class="color" style="background:#3d6ef7"></div><div class="meta"><b>Blueprint Blue</b><code>#3d6ef7</code><span>Primary actions, tile, key accents</span></div></div>
+      <div class="swatch" data-hex="#6a92ff"><div class="color" style="background:#6a92ff"></div><div class="meta"><b>Bright Blue</b><code>#6a92ff</code><span>Links, mono labels, accents on ink</span></div></div>
+      <div class="swatch" data-hex="#eef3ff"><div class="color" style="background:#eef3ff"></div><div class="meta"><b>Blue Tint</b><code>#eef3ff</code><span>Light panels, table fills in documents</span></div></div>
+      <div class="swatch" data-hex="#0b0e14"><div class="color" style="background:#0b0e14;border-bottom:1px solid var(--line)"></div><div class="meta"><b>Ink</b><code>#0b0e14</code><span>Primary background, type on light</span></div></div>
+      <div class="swatch" data-hex="#151b28"><div class="color" style="background:#151b28;border-bottom:1px solid var(--line)"></div><div class="meta"><b>Card</b><code>#151b28</code><span>Surfaces and panels on ink</span></div></div>
+      <div class="swatch" data-hex="#fbfaf8"><div class="color" style="background:#fbfaf8"></div><div class="meta"><b>Warm Paper</b><code>#fbfaf8</code><span>Light documents, type on blue</span></div></div>
+      <div class="swatch" data-hex="#a7b1c5"><div class="color" style="background:#a7b1c5"></div><div class="meta"><b>Body Gray</b><code>#a7b1c5</code><span>Body text on ink</span></div></div>
+    </div>
+    <h3>Rules</h3>
+    <div class="rule-list">
+      <div>Never mix this palette with DevMate red or AI Founder Hub volt. Three brands, three systems.</div>
+      <div>Blue on ink or paper on blue. Never blue type on the blue tile.</div>
+      <div>Body text on ink is Body Gray, headings are Warm Paper. Pure white is not used.</div>
+    </div>
+  </div>
+</section>
+
+<section id="type">
+  <div class="wrap">
+    <div class="kicker">03 / Typography</div>
+    <h2>Inter speaks, mono labels.</h2>
+    <p class="sec-note">Two families only. Inter carries headlines and body. JetBrains Mono carries labels, codes, numbers and anything that should feel like part of the machine.</p>
+    <div class="type-card">
+      <div class="label">INTER · 400 TO 800</div>
+      <div class="spec-inter-1">We build the systems that run the business.</div>
+      <div class="spec-inter-2">Headings 700 to 800, tight letterspacing, minus two percent.</div>
+      <div class="spec-inter-3">Body 400 at 15 to 17px with relaxed line height around 1.7. Emphasis is 600 in Blue Tint, never italic.</div>
+    </div>
+    <div class="type-card">
+      <div class="label">JETBRAINS MONO · 400 TO 700</div>
+      <div class="spec-mono-1">TSB-2026-024 · OMR 12,500 · STAGE 03 OF 05</div>
+      <div class="spec-mono-2">Kickers and labels · uppercase · letterspaced .14em to .22em</div>
+    </div>
+    <h3>Rules</h3>
+    <div class="rule-list">
+      <div>Mono is for short strings only: labels, reference codes, prices, statuses. Never paragraphs.</div>
+      <div>Every section opens with a mono kicker in Bright Blue before the Inter headline.</div>
+      <div>Numbers in tables and pricing always set in mono so they align.</div>
+    </div>
+  </div>
+</section>
+
+<section id="graphic">
+  <div class="wrap">
+    <div class="kicker">04 / Graphic language</div>
+    <h2>The blueprint grid.</h2>
+    <p class="sec-note">The background system that makes TSB Labs recognizable at a glance: a faint engineering grid on ink, structured cards, and mono wayfinding.</p>
+    <div class="gl-grid">
+      <div class="gl">
+        <div class="label">GRID</div>
+        <p>Major lines every 96px, minor every 24px, in Blueprint Blue at 5 and 2.5 percent opacity. Always behind content, never competing with it.</p>
+      </div>
+      <div class="gl">
+        <div class="label">KICKERS</div>
+        <p>Sections are numbered in mono with a short rule line before the text.</p>
+        <div class="demo">01 / SELECTED WORK</div>
+      </div>
+      <div class="gl">
+        <div class="label">THE DOUBLE SLASH</div>
+        <p>List items and service names take a blue double slash prefix, a nod to code comments.</p>
+        <div class="demo">// SECURE FOUNDATIONS</div>
+      </div>
+      <div class="gl">
+        <div class="label">REFERENCE CODES</div>
+        <p>Every document carries a reference in the footer, mono, uppercase.</p>
+        <div class="demo">TSB-2026-0XX</div>
+      </div>
+    </div>
+    <h3>Rules</h3>
+    <div class="rule-list">
+      <div>Cards are Card color on ink, 1px blue-tinted border, 12px radius, generous 28 to 30px padding.</div>
+      <div>Documents for print use Warm Paper with the same grid in Blue Tint, dark cover pages optional.</div>
+      <div>Status chips are mono, uppercase, blue tinted. No traffic-light colors.</div>
+    </div>
+  </div>
+</section>
+
+<section id="voice">
+  <div class="wrap">
+    <div class="kicker">05 / Voice and writing</div>
+    <h2>Calm, structured, no hype.</h2>
+    <p class="sec-note">TSB Labs writes like an engineer who respects your time. The company speaks as we. Ahmed is named as founder and as the person personally delivering, which is a selling point, not a footnote.</p>
+    <h3>The line</h3>
+    <p style="font-family:var(--mono);color:var(--tint);font-size:15px;letter-spacing:.02em;margin-top:6px">We build it. You run it.</p>
+    <h3>Rules</h3>
+    <div class="rule-list">
+      <div>Never use em dashes or en dashes. Commas, colons, periods and plain hyphens only.</div>
+      <div>Short sentences. One idea each. Cut every adjective that does not earn its place.</div>
+      <div>No hype words: revolutionary, cutting edge, world class, unleash, supercharge.</div>
+      <div>Honesty is the selling mechanism. State limits plainly, including what we advise clients not to buy.</div>
+      <div>Confidential clients are described, never named. References offered privately instead.</div>
+      <div>Prices, dates and stage numbers are stated exactly, in mono, or not at all.</div>
+    </div>
+  </div>
+</section>
+
+<section id="assets">
+  <div class="wrap">
+    <div class="kicker">06 / Assets</div>
+    <h2>Download and go.</h2>
+    <p class="sec-note">SVG sources for the logo system. They scale to any size. For print work, install Inter and JetBrains Mono locally, both are free on Google Fonts.</p>
+    <div class="asset-row">
+      <a class="asset" href="/assets/tsb-monogram.svg" download>tsb-monogram.svg</a>
+      <a class="asset" href="/assets/tsb-lockup-dark.svg" download>tsb-lockup-dark.svg</a>
+      <a class="asset" href="/assets/tsb-lockup-light.svg" download>tsb-lockup-light.svg</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">TSB LABS · BRAND TOOLKIT · Maintained alongside the portfolio site. &copy; 2026 TSB Labs.</div>
+</footer>
+
+<div class="copied" id="copied">COPIED</div>
+<script>
+const toast=document.getElementById('copied');let t;
+document.querySelectorAll('.swatch').forEach(s=>{
+  s.addEventListener('click',()=>{
+    navigator.clipboard.writeText(s.dataset.hex).then(()=>{
+      toast.textContent=s.dataset.hex.toUpperCase()+' COPIED';
+      toast.classList.add('show');clearTimeout(t);t=setTimeout(()=>toast.classList.remove('show'),1400);
+    });
+  });
+});
+</script>
+</body>
+</html>

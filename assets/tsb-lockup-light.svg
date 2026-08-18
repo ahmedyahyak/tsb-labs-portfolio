@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 160" width="640" height="160">
+  <!-- Lockup for LIGHT backgrounds (warm paper #fbfaf8). Transparent background. -->
+  <rect x="24" y="32" width="96" height="96" rx="20" fill="#3d6ef7"/>
+  <text x="72" y="94" font-family="'JetBrains Mono','Menlo','Consolas',monospace" font-size="34" font-weight="700" letter-spacing="1" fill="#fbfaf8" text-anchor="middle">TSB</text>
+  <text x="152" y="84" font-family="'Inter','Helvetica Neue',Arial,sans-serif" font-size="42" font-weight="800" letter-spacing="6" fill="#0b0e14">TSB LABS</text>
+  <text x="154" y="116" font-family="'JetBrains Mono','Menlo','Consolas',monospace" font-size="15" font-weight="500" letter-spacing="7" fill="#3d6ef7">SYSTEMS FOR THE AI ERA</text>
+</svg>
