@@ -30,7 +30,7 @@ The applications we build for clients are private by contract and are not publis
 
 | Project | Status | Link |
 |---|---|---|
-| AI Founder Hub platform | Live | [aifounderhub.com](https://aifounderhub.com) |
+| AI Founder Hub platform | Live | [aifounderhub.com](https://aifounderhub.com) · [source](https://github.com/ahmedyahyak/aifounderhub) |
 | Jarvis, our AI operating layer | In daily use | Private |
 | The System Builder (book) | Published 2026 | By Ahmed Yahya Al Kindi |
 
