@@ -29,7 +29,7 @@ The applications we build for clients are private by contract and are not publis
 
 | Project | Status | Scope |
 |---|---|---|
-| Bilingual manufacturing website (EN + AR) | Design sample | Built end to end to show the standard, not delivered client work |
+| Bilingual manufacturing website (EN + AR) | Design sample | Built end to end to show the standard, not delivered client work. [Live sample](https://thermarolls.vercel.app) |
 
 ### Personal work
 
