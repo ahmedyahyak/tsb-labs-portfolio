@@ -24,7 +24,12 @@ The applications we build for clients are private by contract and are not publis
 |---|---|---|
 | Technology partner to a platform business, Oman | Under NDA, in build | Advisory and build lead: customer apps, operations console, encrypted data room, security |
 | Universal gym membership platform, Oman | In delivery | Member app, gym check-in portal, admin dashboard, billing backend |
-| Bilingual manufacturing website, Oman | Launching soon | English and Arabic, static, search ready, structured enquiry pipeline |
+
+### Design samples
+
+| Project | Status | Scope |
+|---|---|---|
+| Bilingual manufacturing website (EN + AR) | Design sample | Built end to end to show the standard, not delivered client work |
 
 ### Personal work
 
