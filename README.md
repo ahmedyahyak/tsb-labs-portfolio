@@ -37,7 +37,7 @@ The applications we build for clients are private by contract and are not publis
 |---|---|---|
 | AI Founder Hub platform | Live | [aifounderhub.com](https://aifounderhub.com) · [source](https://github.com/ahmedyahyak/aifounderhub) |
 | Jarvis, our AI operating layer | In daily use | Private |
-| Luqma, surplus food marketplace | Live, upgrade in progress | [getluqma.com](https://www.getluqma.com) |
+| Luqma, surplus food marketplace | Live, recently upgraded | [getluqma.com](https://www.getluqma.com) |
 | The System Builder (book) | Published 2026 | By Ahmed Yahya Al Kindi |
 
 ### Devmate Solutions, recent product
