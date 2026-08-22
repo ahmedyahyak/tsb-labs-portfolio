@@ -36,14 +36,15 @@ The applications we build for clients are private by contract and are not publis
 | Project | Status | Link |
 |---|---|---|
 | AI Founder Hub platform | Live | [aifounderhub.com](https://aifounderhub.com) · [source](https://github.com/ahmedyahyak/aifounderhub) |
-| Jarvis, our AI operating layer | In daily use | Private |
+| Madar OS, our AI operating system | Stage 2, in daily use | [Interactive demo](https://tsb-os-demo.vercel.app) |
 | Luqma, surplus food marketplace | Live, recently upgraded | [getluqma.com](https://www.getluqma.com) |
 | The System Builder (book) | Published 2026 | By Ahmed Yahya Al Kindi |
 
-### Devmate Solutions, recent product
+### Devmate Solutions, recent products
 
 | Project | Status | Link |
 |---|---|---|
+| AI lead management system for Dubai real estate | Live | [devmatesolutions.com/aileadmanagement](https://www.devmatesolutions.com/aileadmanagement) |
 | AI call assistant for real estate, hotel and travel | Live | [devmateaiautomation.vercel.app](https://devmateaiautomation.vercel.app/) |
 
 ## How we work
