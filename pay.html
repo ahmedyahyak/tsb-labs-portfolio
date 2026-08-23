@@ -96,71 +96,13 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
   <div class="wrap">
     <div class="kicker"><b>01</b> / PAYMENTS</div>
     <h1>Settle an <em>invoice</em>.</h1>
-    <p class="lede">Bank transfer or cryptocurrency. If we have already agreed a scope, pick the matching line below. If not, book a call first, because we do not take payment before there is something to pay for.</p>
+    <p class="lede">Already agreed a scope with us? Tell us which, and we will send the account details and a referenced invoice, normally the same working day. If nothing is agreed yet, start on the <a href="/book.html">services page</a> instead, because we do not take payment before there is something to pay for.</p>
   </div>
 </header>
 
 <main class="wrap">
 
-  <h2>02 / What you are paying for</h2>
-  <div class="tiers">
-
-    <div class="tier">
-      <div>
-        <h3>Founder OS, deployment and setup</h3>
-        <p>One time. Context graph built from your business, departments configured, connectors wired to your existing systems, permission ring set up, and handover.</p>
-      </div>
-      <div class="right">
-        <div class="amt">$5,500<small>one time</small></div>
-        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 5500 USD -->
-        <a class="btn" href="#request" data-link="founder-os-setup">Request payment details</a>
-      </div>
-    </div>
-
-    <div class="tier">
-      <div>
-        <h3>Founder OS, annual</h3>
-        <p>Twelve months charged as ten. Includes the running deployment, model capacity, monitoring, backups and continuous updates. One payment instead of twelve.</p>
-      </div>
-      <div class="right">
-        <div class="amt">$5,500<small>per year</small></div>
-        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 5500 USD -->
-        <a class="btn" href="#request" data-link="founder-os-annual">Request payment details</a>
-      </div>
-    </div>
-
-    <div class="tier">
-      <div>
-        <h3>Founder OS, monthly</h3>
-        <p>The same deployment billed month to month. Cancel with thirty days notice. Most clients move to annual after the first quarter.</p>
-      </div>
-      <div class="right">
-        <div class="amt">$550<small>per month</small></div>
-        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 550 USD -->
-        <a class="btn" href="#request" data-link="founder-os-monthly">Request payment details</a>
-      </div>
-    </div>
-
-    <div class="tier">
-      <div>
-        <h3>Advisory, project work or a custom scope</h3>
-        <p>Anything we have quoted separately. Tell us the reference on your invoice and we will send a payment link for the exact amount.</p>
-      </div>
-      <div class="right">
-        <div class="amt">Quoted<small>per engagement</small></div>
-        <a class="btn ghost" href="#request">Request a link</a>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="methods">
-    <span class="m">Bank transfer</span><span class="m">USDT</span><span class="m">USDC</span>
-    <span class="m">BTC</span><span class="m">ETH</span><span class="m">SOL</span><span class="m">BNB</span>
-  </div>
-  <p class="note" style="margin-top:14px">Card and Apple Pay are not enabled on this page. We will add them when they are genuinely available, and not before.</p>
-
-  <h2 id="request">03 / Bank transfer, or a custom amount</h2>
+  <h2 id="request">02 / Request details and an invoice</h2>
   <div class="panel">
     <h3>We send the details, we do not publish them</h3>
     <p>Bank transfer is available for any amount and is usually the cheapest route for larger invoices. We do not publish our account details on a public page, because published details get scraped and reused in invoice fraud against the people who trust us.</p>
@@ -172,7 +114,7 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
     <p class="note" id="hint">Opens your email client with the message prepared. Nothing is submitted to this page and nothing is stored here.</p>
   </div>
 
-  <h2>04 / Before you pay</h2>
+  <h2>03 / Before you pay</h2>
   <div class="panel">
     <ul>
       <li><strong style="color:var(--paper)">Check the reference.</strong> Every TSB Labs invoice carries a code in the form TSB-INV-YYYY-NNN. If a payment request reaches you without one, or the account details differ from what we sent you directly, stop and call before paying.</li>
@@ -217,6 +159,13 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
 
   if (SERVICE) {
     hint.textContent = 'Your request will say it is about: ' + SERVICE + '.';
+    // Arriving from /book with #request: the browser routinely misses the hash
+    // scroll on a fresh navigation, dropping the visitor at the top of the page
+    // with the form far below. Put them on the form and in the field.
+    requestAnimationFrame(function(){
+      document.getElementById('request').scrollIntoView({block:'start'});
+      input.focus({preventScroll:true});
+    });
   }
 
   btn.addEventListener('click', function(e){
