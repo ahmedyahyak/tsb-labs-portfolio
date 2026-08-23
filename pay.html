@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Pay TSB Labs</title>
-<meta name="description" content="Settle a TSB Labs invoice by card, Apple Pay, cryptocurrency or bank transfer.">
+<meta name="description" content="Settle a TSB Labs invoice by bank transfer or cryptocurrency.">
 <meta name="robots" content="noindex">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%233d6ef7'/%3E%3Ctext x='32' y='42' font-family='Menlo,monospace' font-size='26' font-weight='700' fill='%23fbfaf8' text-anchor='middle'%3ETSB%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -96,7 +96,7 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
   <div class="wrap">
     <div class="kicker"><b>01</b> / PAYMENTS</div>
     <h1>Settle an <em>invoice</em>.</h1>
-    <p class="lede">Card, Apple Pay, cryptocurrency or bank transfer. If we have already agreed a scope, pick the matching line below. If not, book a call first, because we do not take payment before there is something to pay for.</p>
+    <p class="lede">Bank transfer or cryptocurrency. If we have already agreed a scope, pick the matching line below. If not, book a call first, because we do not take payment before there is something to pay for.</p>
   </div>
 </header>
 
@@ -112,8 +112,8 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
       </div>
       <div class="right">
         <div class="amt">$5,500<small>one time</small></div>
-        <!-- REPLACE href with your NOWPayments payment link for 5500 USD -->
-        <a class="btn" href="#request" data-link="founder-os-setup">Pay now</a>
+        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 5500 USD -->
+        <a class="btn" href="#request" data-link="founder-os-setup">Request payment details</a>
       </div>
     </div>
 
@@ -124,8 +124,8 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
       </div>
       <div class="right">
         <div class="amt">$5,500<small>per year</small></div>
-        <!-- REPLACE href with your NOWPayments payment link for 5500 USD -->
-        <a class="btn" href="#request" data-link="founder-os-annual">Pay now</a>
+        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 5500 USD -->
+        <a class="btn" href="#request" data-link="founder-os-annual">Request payment details</a>
       </div>
     </div>
 
@@ -136,8 +136,8 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
       </div>
       <div class="right">
         <div class="amt">$550<small>per month</small></div>
-        <!-- REPLACE href with your NOWPayments payment link for 550 USD -->
-        <a class="btn" href="#request" data-link="founder-os-monthly">Pay now</a>
+        <!-- When a NOWPayments link exists, set href to it and change the label back to "Pay in crypto". Amount: 550 USD -->
+        <a class="btn" href="#request" data-link="founder-os-monthly">Request payment details</a>
       </div>
     </div>
 
@@ -155,10 +155,10 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
   </div>
 
   <div class="methods">
-    <span class="m">Visa</span><span class="m">Mastercard</span><span class="m">Apple Pay</span>
-    <span class="m">Google Pay</span><span class="m">USDT</span><span class="m">USDC</span>
-    <span class="m">BTC</span><span class="m">ETH</span><span class="m">Bank transfer</span>
+    <span class="m">Bank transfer</span><span class="m">USDT</span><span class="m">USDC</span>
+    <span class="m">BTC</span><span class="m">ETH</span><span class="m">SOL</span><span class="m">BNB</span>
   </div>
+  <p class="note" style="margin-top:14px">Card and Apple Pay are not enabled on this page. We will add them when they are genuinely available, and not before.</p>
 
   <h2 id="request">03 / Bank transfer, or a custom amount</h2>
   <div class="panel">
@@ -176,9 +176,9 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
   <div class="panel">
     <ul>
       <li><strong style="color:var(--paper)">Check the reference.</strong> Every TSB Labs invoice carries a code in the form TSB-INV-YYYY-NNN. If a payment request reaches you without one, or the account details differ from what we sent you directly, stop and call before paying.</li>
-      <li><strong style="color:var(--paper)">Card payments above roughly 700 euro</strong> require identity verification by the payment processor. For larger invoices, bank transfer is usually faster.</li>
-      <li><strong style="color:var(--paper)">We never ask for card details by email</strong> or over a call, and we will never ask you to change payment details by message alone.</li>
-      <li><strong style="color:var(--paper)">Card and crypto checkout is hosted by NOWPayments.</strong> Your card details are entered on their secure page and never touch ours.</li>
+      <li><strong style="color:var(--paper)">For most invoices, bank transfer is the simpler route.</strong> Paying in cryptocurrency means the processor verifies your identity first, which is worth it only if you already hold the coin.</li>
+      <li><strong style="color:var(--paper)">We never ask for payment details by email</strong> or over a call, and we will never ask you to change bank details by message alone.</li>
+      <li><strong style="color:var(--paper)">Crypto checkout is hosted by NOWPayments.</strong> The transaction happens on their secure page and never touches ours.</li>
     </ul>
   </div>
 
@@ -190,7 +190,7 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
 
 <footer class="wrap">
   <span>TSB Labs &middot; Systems for the AI era</span>
-  <span>Card and crypto checkout hosted by NOWPayments</span>
+  <span>Crypto checkout hosted by NOWPayments</span>
 </footer>
 
 <script>
