@@ -206,6 +206,19 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
       '&body=' + encodeURIComponent(body);
   }
 
+  // book.html sends the chosen service through as ?for=slug so the request
+  // arrives already saying what it is about.
+  var SERVICE = (function(){
+    var m = /[?&]for=([^&#]+)/.exec(window.location.search);
+    if (!m) return '';
+    var slug = decodeURIComponent(m[1]).replace(/[^a-z0-9-]/gi, '');
+    return slug ? slug.replace(/-/g, ' ') : '';
+  })();
+
+  if (SERVICE) {
+    hint.textContent = 'Your request will say it is about: ' + SERVICE + '.';
+  }
+
   btn.addEventListener('click', function(e){
     e.preventDefault();
     var v = (input.value || '').trim();
@@ -218,8 +231,10 @@ footer{border-top:1px solid var(--line);margin-top:60px;padding:30px 0 50px;font
     hint.textContent = 'Opening your email client.';
     hint.style.color = '';
     window.location.href = compose(
-      'Payment details request',
-      'Hello,\n\nPlease send the bank details and an invoice.\n\nMy email: ' + v +
+      SERVICE ? 'Payment details request: ' + SERVICE : 'Payment details request',
+      'Hello,\n\nPlease send the bank details and an invoice.\n\n' +
+      (SERVICE ? 'Interested in: ' + SERVICE + '\n' : '') +
+      'My email: ' + v +
       '\nInvoice reference (if you have one): \nAmount: \n\nThank you.'
     );
   });
