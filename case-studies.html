@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Case studies | TSB Labs</title>
+<meta name="description" content="Three engagements described in evidence rather than adjectives: the AI operating system that runs TSB Labs, a live surplus food marketplace in Muscat, and a technology partnership with a platform business in Oman.">
+<meta property="og:title" content="Case studies | TSB Labs">
+<meta property="og:description" content="Evidence, not adjectives. Three engagements, the numbers behind them, and the parts we would tell you honestly.">
+<meta property="og:type" content="article">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%233d6ef7'/%3E%3Ctext x='32' y='42' font-family='Menlo,monospace' font-size='26' font-weight='700' fill='%23fbfaf8' text-anchor='middle'%3ETSB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#3d6ef7;
+  --bright:#6a92ff;
+  --tint:#eef3ff;
+  --ink:#0b0e14;
+  --card:#151b28;
+  --paper:#fbfaf8;
+  --body:#a7b1c5;
+  --line:rgba(106,146,255,.16);
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+::selection{background:var(--blue);color:var(--paper)}
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:#232c40;border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:#31405e}
+body{
+  background:var(--ink);
+  color:var(--body);
+  font-family:var(--sans);
+  font-size:16px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(61,110,247,.05) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(61,110,247,.05) 1px,transparent 1px),
+    linear-gradient(rgba(61,110,247,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(61,110,247,.025) 1px,transparent 1px);
+  background-size:96px 96px,96px 96px,24px 24px,24px 24px;
+}
+.wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
+a{color:var(--bright);text-decoration:none;transition:color .15s ease}
+a:hover{color:var(--tint)}
+:focus-visible{outline:2px solid var(--bright);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-9999px;top:0;background:var(--blue);color:var(--paper);padding:10px 18px;z-index:99;border-radius:0 0 8px 0}
+.skip:focus{left:0}
+
+/* nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(11,14,20,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;max-width:1080px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.monogram{width:40px;height:40px;border-radius:9px;flex:none;background:var(--blue);color:var(--paper);font-family:var(--mono);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;letter-spacing:.02em}
+.wordmark{display:flex;flex-direction:column;line-height:1.15}
+.wordmark b{color:var(--paper);font-size:15px;font-weight:700;letter-spacing:.02em}
+.wordmark span{font-family:var(--mono);font-size:9px;color:#5d6b85;letter-spacing:.14em}
+.nav-right{display:flex;align-items:center;gap:22px}
+.nav-links{display:flex;gap:22px}
+.nav-links a{font-size:14px;color:var(--body);font-weight:500}
+.nav-links a:hover{color:var(--paper)}
+.btn-nav{background:var(--blue);color:var(--paper)!important;padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600}
+.btn-nav:hover{background:var(--bright)}
+@media(max-width:820px){.nav-links{display:none}}
+
+/* hero */
+header.hero{padding:84px 0 56px;border-bottom:1px solid var(--line)}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:#5d6b85;text-transform:uppercase;margin-bottom:20px}
+.kicker b{color:var(--blue);font-weight:700}
+h1{font-size:clamp(34px,6vw,58px);line-height:1.05;color:var(--paper);font-weight:800;letter-spacing:-.025em;margin-bottom:22px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--blue),var(--bright));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(16px,2.2vw,19px);max-width:64ch;color:#b8c2d6}
+.lede + .lede{margin-top:16px}
+
+/* case */
+.case{padding:64px 0;border-bottom:1px solid var(--line)}
+.case-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:14px;margin-bottom:8px}
+.chip{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:5px 10px;border-radius:999px;border:1px solid var(--line);color:#8b98b3;white-space:nowrap}
+.chip.live{color:#7fe3a8;border-color:rgba(127,227,168,.28)}
+.chip.nda{color:#f7c46a;border-color:rgba(247,196,106,.28)}
+h2{font-size:clamp(25px,3.6vw,36px);line-height:1.16;color:var(--paper);font-weight:700;letter-spacing:-.02em;margin:10px 0 18px}
+h3{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700;margin:32px 0 12px}
+.case p{max-width:72ch}
+.case p + p{margin-top:14px}
+ul{list-style:none;max-width:72ch}
+li{position:relative;padding-left:22px;margin-top:10px}
+li::before{content:"";position:absolute;left:2px;top:11px;width:6px;height:6px;border-radius:2px;background:var(--blue)}
+strong{color:var(--paper);font-weight:600}
+
+/* evidence */
+.ev{margin-top:16px;border:1px solid var(--line);border-radius:14px;background:var(--card);overflow:hidden}
+.ev-head{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8b98b3;padding:12px 18px;border-bottom:1px solid var(--line);background:rgba(61,110,247,.05)}
+.ev-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;padding:13px 18px;border-bottom:1px solid rgba(106,146,255,.08);align-items:baseline}
+.ev-row:last-child{border-bottom:0}
+.ev-row span{font-size:14.5px}
+.ev-row b{font-family:var(--mono);font-size:14px;color:var(--paper);font-weight:700;text-align:right;white-space:nowrap}
+@media(max-width:600px){.ev-row{grid-template-columns:1fr}.ev-row b{text-align:left}}
+
+/* honest */
+.honest{margin-top:28px;border-left:2px solid var(--blue);padding:4px 0 4px 20px}
+.honest .h{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:8px}
+.honest p{color:#b8c2d6}
+
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:26px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8b98b3;border:1px solid var(--line);border-radius:6px;padding:6px 10px}
+.golink{display:inline-block;margin-top:22px;font-family:var(--mono);font-size:12px;letter-spacing:.08em}
+
+/* close */
+.close{padding:72px 0 90px}
+.close h2{margin-top:0}
+.cta{display:inline-block;margin-top:26px;background:var(--blue);color:var(--paper);padding:15px 30px;border-radius:10px;font-weight:600;font-size:15.5px}
+.cta:hover{background:var(--bright);color:var(--paper)}
+.sub{margin-top:14px;font-size:13.5px;color:#7b88a3}
+
+footer{border-top:1px solid var(--line);padding:34px 0 44px}
+.foot-inner{display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+.foot-brand{display:flex;align-items:center;gap:12px}
+.foot-brand span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#5d6b85}
+.foot-links{display:flex;flex-wrap:wrap;gap:18px}
+.foot-links a{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:#8b98b3}
+.foot-links a:hover{color:var(--paper)}
+.foot-note{margin-top:24px;font-size:12.5px;color:#5d6b85;max-width:70ch}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav aria-label="Main">
+  <div class="nav-inner">
+    <div class="brand">
+      <a href="/" style="display:flex;align-items:center;gap:12px">
+        <div class="monogram">TSB</div>
+        <div class="wordmark"><b>TSB LABS</b><span>SYSTEMS FOR THE AI ERA</span></div>
+      </a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="/#work">Work</a>
+        <a href="/#services">What we build</a>
+        <a href="/#method">How we work</a>
+        <a href="/#founder">Founder</a>
+      </div>
+      <a class="btn-nav" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker"><b>01</b> / CASE STUDIES</div>
+    <h1>Evidence, <em>not adjectives</em>.</h1>
+    <p class="lede">Most agency case studies are adjectives with a logo on top. These three are written the other way round: what the situation was, what we built, and the numbers we can actually stand behind, measured rather than estimated.</p>
+    <p class="lede">Every figure below was verified on the day of writing. Where a number does not exist yet, we say so instead of inventing one. Some engagements are under confidentiality, so we describe the work rather than name the client.</p>
+  </div>
+</header>
+
+<!-- CASE 01 -->
+<section class="case">
+  <div class="wrap">
+    <div class="case-head">
+      <span class="chip">Case / 01</span>
+      <span class="chip live">In daily use</span>
+      <span class="chip">TSB Labs product</span>
+    </div>
+    <h2>The company that sells an AI operating system is run by one</h2>
+
+    <p>A solo founder running several ventures has the same problem every small company has, only sharper: the work of a sales team, an operations team and a support desk all exists, and none of the salaries do. The usual answers are to hire ahead of revenue, which kills companies, or to do everything personally, which caps them.</p>
+    <p>Madar OS is our answer, and TSB Labs is its first deployment. One brain with a persistent memory graph of the business, a bench of specialist roles it puts on as needed, and runtime search across a library of skills it looks up rather than installs. Every sensitive action passes a permission ring before it happens.</p>
+
+    <h3>What runs without anyone watching</h3>
+    <ul>
+      <li><strong>An inbound lane.</strong> A new enquiry is detected, researched against the memory graph, answered in the founder's voice, and written back to the CRM with its status changed.</li>
+      <li><strong>A LinkedIn co pilot.</strong> It researches targets and drafts the messages, then stops. It never touches the platform itself, because LinkedIn's terms say a human sends. That boundary is written into the system, not left to discipline.</li>
+      <li><strong>A doctor.</strong> Every five minutes it checks the other services and revives anything that has died.</li>
+      <li><strong>A nightly backup</strong> with a restore drill that has been run rather than assumed, loading the dump into a throwaway database so the live one is never touched.</li>
+    </ul>
+
+    <h3>Evidence</h3>
+    <div class="ev">
+      <div class="ev-head">Verified 23 August 2026</div>
+      <div class="ev-row"><span>Automated checks passing, with a clean type check</span><b>320</b></div>
+      <div class="ev-row"><span>Specialist roles on the bench, across commercial, operating and technical</span><b>37</b></div>
+      <div class="ev-row"><span>Enquiry detected, brief sent, reply written, CRM updated, zero taps</span><b>under 60s</b></div>
+      <div class="ev-row"><span>Cost of that complete inbound loop</span><b>$0.159</b></div>
+      <div class="ev-row"><span>A deliberately killed service revived by the doctor</span><b>8s</b></div>
+      <div class="ev-row"><span>A new agent role defined, briefed, examined and passed</span><b>93s</b></div>
+    </div>
+
+    <div class="honest">
+      <div class="h">What we would tell you honestly</div>
+      <p>TSB Labs is deployment zero. We run our own company on this every day before asking anyone else to run theirs on it, which is the only reason we know which parts genuinely work unattended and which still want a human. The restore drill matters more than any of the speed numbers: a system that cannot prove it can come back is a demo, not infrastructure.</p>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Memory graph</span><span class="tag">Permission ring</span><span class="tag">Unattended lanes</span><span class="tag">Self healing services</span><span class="tag">CRM</span>
+    </div>
+    <a class="golink" href="https://tsb-os-demo.vercel.app" target="_blank" rel="noopener">try the interactive demo &#8599;</a>
+  </div>
+</section>
+
+<!-- CASE 02 -->
+<section class="case">
+  <div class="wrap">
+    <div class="case-head">
+      <span class="chip">Case / 02</span>
+      <span class="chip live">Live</span>
+      <span class="chip">TSB Labs venture</span>
+    </div>
+    <h2>A surplus food marketplace where the vendor pays nothing</h2>
+
+    <p>Every night, venues across Muscat throw away food that was good an hour earlier. Customers would happily buy it at a discount. The reason the trade does not happen by itself is friction on the vendor's side: marketplaces take a commission on already discounted stock, and any system that needs staff training or new hardware at the counter dies in its first week.</p>
+    <p>Luqma removes both objections. Venues list deals at forty to eighty percent off, on their own schedule, whenever they know what is left. Members find them in the app and redeem with a single Wallet pass at the counter. There is <strong>no commission for vendors, by design</strong>, and nothing for a cashier to learn.</p>
+
+    <h3>What was built</h3>
+    <ul>
+      <li>A customer app for discovering and claiming deals as they go live through the evening.</li>
+      <li>A vendor console, so venues list and schedule their own stock without going through us.</li>
+      <li>An admin console for running the marketplace itself.</li>
+    </ul>
+
+    <div class="honest">
+      <div class="h">What we would tell you honestly</div>
+      <p>Luqma is our own venture, not a client engagement, which means we carry its risk and we are free to say what it has not proved yet. We are not publishing traction figures here, because a number without a denominator is decoration. What it does demonstrate is scope: a consumer app, a merchant console and an operations console, designed, shipped and kept running by the same house.</p>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Consumer app</span><span class="tag">Vendor console</span><span class="tag">Wallet passes</span><span class="tag">Marketplace operations</span>
+    </div>
+    <a class="golink" href="https://www.getluqma.com" target="_blank" rel="noopener">getluqma.com &#8599;</a>
+  </div>
+</section>
+
+<!-- CASE 03 -->
+<section class="case">
+  <div class="wrap">
+    <div class="case-head">
+      <span class="chip">Case / 03</span>
+      <span class="chip nda">Under NDA</span>
+      <span class="chip">In build</span>
+    </div>
+    <h2>Technology partner to a platform business in Oman</h2>
+
+    <p>Some companies need a platform before they need a technology department, and they are asked to make architecture and security decisions years before they have anyone qualified to make them. We act as technology advisor and build lead to a platform business in Oman: leading the development team, owning architecture and security, and delivering customer apps, an operations console and an encrypted data room.</p>
+    <p>We cannot describe their product. We can describe the discipline, and the discipline is the part that transfers.</p>
+
+    <h3>How the engagement is run</h3>
+    <ul>
+      <li><strong>Security is a named programme, not a line item.</strong> A fixed set of mandatory controls applies at every commercial tier. Tiers differ by infrastructure resilience, never by whether the data is protected, because security is the one thing that cannot be retrofitted after launch.</li>
+      <li><strong>Data residency and legal responsibility are settled in writing before build.</strong> Who controls the personal data and who merely processes it is agreed at the start, so that after an incident nobody is reading a contract hoping it says something helpful.</li>
+      <li><strong>Infrastructure is chosen on three year total cost, not sticker price.</strong> Two routes were fully costed, including hardware replacement on one side and price rises and exit cost on the other, before either was recommended.</li>
+      <li><strong>Supplier quotations are audited line by line.</strong> On this engagement that review found arithmetic errors inside the supplier's own totals, and the quote went back before anyone signed anything.</li>
+      <li><strong>Acceptance is defined as demonstrations, not deliverables.</strong> "The booking module is complete" is an argument. "A customer books, a job is completed, payment is taken" either works or it does not. Acceptance disputes are how staged contracts die.</li>
+    </ul>
+
+    <div class="honest">
+      <div class="h">What we would tell you honestly</div>
+      <p>This engagement is under confidentiality, so we will not name the client, the sector or the figures, and you should be suspicious of any supplier who would. References are available privately on request. The reason this work is on the page at all is the audit habit: the most valuable thing we did in the first months was not writing code, it was reading someone else's numbers carefully enough to find the mistakes in them.</p>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Mobile apps</span><span class="tag">Ops console</span><span class="tag">Secure infrastructure</span><span class="tag">Advisory</span>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSE -->
+<section class="close">
+  <div class="wrap">
+    <div class="kicker"><b>02</b> / THE COMMON THREAD</div>
+    <h2>We would rather show the working than the adjective</h2>
+    <p>Three very different engagements, one habit. Numbers get measured before they get quoted. Boundaries get written into the system rather than left to good intentions. The uncomfortable part of the story goes on the page next to the flattering part, because a supplier who only ever tells you good news is a supplier you cannot use to make decisions.</p>
+    <p>If you are weighing up a build, an advisory engagement, or putting an AI operating system into your own company, the fastest way to find out whether we are useful is twenty minutes.</p>
+    <a class="cta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a discovery call</a>
+    <p class="sub">Ahmed Yahya Al Kindi, founder. GCC and worldwide.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div class="foot-brand"><div class="monogram">TSB</div><span>TSB LABS &middot; SYSTEMS FOR THE AI ERA</span></div>
+      <div class="foot-links">
+        <a href="/#work">WORK</a>
+        <a href="/case-studies.html">CASE STUDIES</a>
+        <a href="/#method">METHOD</a>
+        <a href="/brand/">BRAND</a>
+        <a href="https://github.com/ahmedyahyak/tsb-labs-portfolio" target="_blank" rel="noopener">GITHUB</a>
+        <a href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">BOOK A CALL</a>
+      </div>
+    </div>
+    <div class="foot-note">Some engagements are under confidentiality. We describe the work rather than name the client. Figures on this page were verified on 23 August 2026 and are restated, never estimated. &copy; 2026 TSB Labs.</div>
+  </div>
+</footer>
+
+</body>
+</html>
