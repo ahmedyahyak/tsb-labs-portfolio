@@ -103,11 +103,26 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:30px 0 50px;font
 
 <main class="wrap">
 
-  <h2>02 / How it works</h2>
+  <h2>02 / Three ways in</h2>
   <div class="steps">
-    <div class="step"><b>01 CHOOSE</b><span>Pick the line that matches what you need. Scoped items get a fixed quote after one call.</span></div>
-    <div class="step"><b>02 SETTLE</b><span>Pay in cryptocurrency, or request an invoice and pay by bank transfer.</span></div>
-    <div class="step"><b>03 START</b><span>You land on the calendar and pick your time. Builds begin the week payment clears.</span></div>
+    <div class="step">
+      <b>01 A SESSION</b>
+      <span>Sixty minutes with Ahmed at <strong style="color:var(--paper)">$750</strong>. Settle it and pick your time. The fastest way to test whether this is useful to you.</span>
+      <a class="btn" style="margin-top:12px;width:100%" href="#settle" data-svc="advisory-hour">Book a session</a>
+    </div>
+    <div class="step">
+      <b>02 A CUSTOMISED PROGRAM</b>
+      <span>Madar OS, a build, or training tuned to your team. Every one of these is scoped on a call first. That conversation is free.</span>
+      <a class="btn ghost" style="margin-top:12px;width:100%" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a free call</a>
+    </div>
+    <div class="step">
+      <b>03 JUST ASK</b>
+      <span>Not sure what you need, or want it in writing first? Email Ahmed directly and he will answer himself.</span>
+      <a class="btn ghost" style="margin-top:12px;width:100%" id="emailAhmed" href="#">Email Ahmed</a>
+    </div>
+  </div>
+  <div class="note">
+    Prices below are what things cost when the scope is standard. Anything customised is quoted as a whole after the call, in writing, before it starts.
   </div>
 
   <h2>03 / Madar OS</h2>
@@ -305,6 +320,21 @@ footer{border-top:1px solid var(--line);margin-top:56px;padding:30px 0 50px;font
 
 <script>
 (function(){
+  // Ahmed's working contact address. TSB Labs has no domain or mailbox of its
+  // own yet, so this is deliberate rather than an oversight. Swap it the day
+  // a TSB address exists.
+  var EMAIL = 'ahmed@devmatesolutions.com';
+  var mail = document.getElementById('emailAhmed');
+  if (mail) {
+    mail.setAttribute('href',
+      'mailto:' + EMAIL +
+      '?subject=' + encodeURIComponent('Working with TSB Labs') +
+      '&body=' + encodeURIComponent(
+        'Hello Ahmed,\n\nHere is what we are trying to do:\n\n\n' +
+        'Company: \nWhere we are based: \nRough timeline: \n\nThank you.'
+      ));
+  }
+
   // Until real NOWPayments links exist, every settle button routes to the
   // invoice request page carrying which service was clicked, rather than
   // pretending a checkout is live.
