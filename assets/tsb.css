@@ -312,13 +312,16 @@ footer{padding:44px 0 60px;font-size:13px}
 
 /* ---------- reveal ---------- */
 .reveal{opacity:1;transform:none}
+/* Deliberately does nothing. This class used to hide content until a scroll
+   observer revealed it, and when the observer did not survive a refactor the
+   whole site rendered blank while validating perfectly. The class is kept
+   because the markup references it in many places; the hiding is not. If an
+   entrance animation is wanted later it must start from visible and never be
+   the thing that decides whether content exists. */
 /* Only hide when JavaScript is present and has said so. If the script fails,
    never loads, or is simply forgotten when a page is rebuilt, the content is
    still there. It was not: every .reveal element sat at opacity 0 on five
    pages because the observer did not survive a refactor. */
-html.js-reveal .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
-html.js-reveal .reveal.in{opacity:1;transform:none}
-.reveal.in{opacity:1;transform:none}
 
 @media(prefers-reduced-motion:reduce){
   .reveal{opacity:1;transform:none;transition:none}
