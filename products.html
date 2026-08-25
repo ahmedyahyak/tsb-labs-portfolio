@@ -141,5 +141,20 @@
   </div>
   <div class="wrap footbar"><span>TSB Labs · Sultanate of Oman</span><span>Some engagements are under confidentiality. We describe the work, not the client.</span></div>
 </footer>
+<script>
+/* Reveal on scroll. The class is added by this script, so a page without it
+   shows its content rather than hiding it forever. */
+(function(){
+  var r=document.documentElement;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if(!('IntersectionObserver' in window)) return;
+  r.classList.add('js-reveal');
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{rootMargin:'0px 0px -8% 0px',threshold:.06});
+  var seen=function(){ document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el) }) };
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',seen); else seen();
+})();
+</script>
 </body>
 </html>

@@ -311,7 +311,13 @@ footer{padding:44px 0 60px;font-size:13px}
 .foot-note{color:rgba(167,177,197,.65);max-width:440px;margin-top:18px}
 
 /* ---------- reveal ---------- */
-.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal{opacity:1;transform:none}
+/* Only hide when JavaScript is present and has said so. If the script fails,
+   never loads, or is simply forgotten when a page is rebuilt, the content is
+   still there. It was not: every .reveal element sat at opacity 0 on five
+   pages because the observer did not survive a refactor. */
+html.js-reveal .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+html.js-reveal .reveal.in{opacity:1;transform:none}
 .reveal.in{opacity:1;transform:none}
 
 @media(prefers-reduced-motion:reduce){
