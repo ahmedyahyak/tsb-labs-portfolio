@@ -384,18 +384,20 @@ footer{padding:44px 0 60px;font-size:13px}
    separate job from a markup check. */
 @media(max-width:820px){
   .navin{flex-wrap:wrap;gap:12px 18px}
+  /* Wrap, do not scroll. A horizontally scrolling nav hides its last item
+     behind an affordance nobody sees: How we work ended at 413px on a 375px
+     screen, so it simply was not there as far as the visitor was concerned.
+     Two visible rows beat one row with a secret. */
   .navlinks{
     display:flex;
+    flex-wrap:wrap;
     order:3;
     flex-basis:100%;
     margin-left:0;
-    gap:16px;
-    overflow-x:auto;
-    padding-bottom:2px;
-    scrollbar-width:none;
+    gap:10px 18px;
+    overflow:visible;
   }
-  .navlinks::-webkit-scrollbar{display:none}
-  .navlinks a{white-space:nowrap;font-size:12.5px;padding:4px 0}
+  .navlinks a{white-space:nowrap;font-size:12.5px;padding:3px 0}
   .navcta{margin-left:auto;padding:8px 13px;font-size:11px}
 }
 @media(max-width:420px){
