@@ -60,15 +60,30 @@
      --lbl  12px  anything you click, and anything that states a fact the page
                   does not repeat elsewhere: buttons, links, chips, status
                   pills, stat captions, table meta.
-     --orn  10.5px  ornament. Eyebrows that label a heading sitting directly
-                  below them, the brand lockup, the logotype. Uppercase mono
-                  at this size with .2em tracking is a deliberate choice and
-                  reads cleanly. Raising it to 12 would flatten it into the
-                  content it is there to introduce.
+     --orn  12px  was 10.5px, on the argument that an eyebrow labelling the
+                  heading directly below it is ornament, and that raising it
+                  would flatten it into the content it introduces.
+
+                  That argument held for most of them and not for all. Checked
+                  every sub-12px string on all nine pages against the text of
+                  every element 12px and over: about twenty carry information
+                  that appears nowhere else at a readable size. "Industries"
+                  and "Why this venture" on the homepage head sections that
+                  have no heading. "In practice" and "What we do not do" are
+                  the only labels those blocks get. The company tagline,
+                  "Systems for the AI era", sat at 10px on four pages and is
+                  written nowhere else on the site.
+
+                  The classes are shared between the ornamental and the
+                  load-bearing uses, so there is no clean split without
+                  restructuring the markup. 12px under a 28 to 40px heading is
+                  still a 2.5x gap, so the hierarchy survives the raise where
+                  the readability did not survive the drop.
+
      Before this there were sizes at 8, 9, 9.5, 10, 10.5 and 11px. Six steps
      inside a 3px range is not a hierarchy, it is drift. */
   --lbl:12px;
-  --orn:10.5px;
+  --orn:12px;
 
   /* rhythm */
   --gut:32px;
@@ -198,9 +213,11 @@ a:visited{color:inherit}
   display:grid;place-items:center}
 .bt{font-family:var(--display);font-weight:800;font-size:1.02rem;
   letter-spacing:-.02em;color:var(--text);line-height:1}
-/* 8px was past the point where the tagline was doing any work. 10px keeps it
-   subordinate to the 16px wordmark it sits under, and can actually be read. */
-.bs{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.15em;
+/* 8px was past the point where the tagline was doing any work, and 10px was
+   still under the floor. This line is the only place the company positioning
+   is written on the whole site, so it is not ornament and it gets 12px. The
+   wordmark above it is 16px and bolder, which carries the hierarchy. */
+.bs{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.11em;
   text-transform:uppercase;color:var(--faint);margin-top:2px}
 .navlinks{display:flex;gap:26px}
 .navlinks a{font-size:13.5px;color:var(--mute);text-decoration:none;transition:color .15s}
