@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   TSB Labs design system.
+   TSB Labs design system. SINGLE THEME, dark, on purpose.
 
    Blueprint blue on near-black, deliberately nothing like Madar's void and
    copper. Different companies, and mixing their identities is the one rule
@@ -43,21 +43,9 @@
   --sec:clamp(72px,9vw,116px);
 }
 
-@media (prefers-color-scheme: light){
-  :root{
-    --void:#eceff6; --ink:#f6f8fc; --raise:#ffffff;
-    --line:#d7ddeb; --line-lit:#c3cbde;
-    --ice:#2a52c9; --tint:rgba(61,110,247,.07); --warm:#b3612a;
-    --text:#0a0d15; --mute:#4d566b; --faint:#7e8798;
-  }
-}
-:root[data-theme="light"]{
-  --void:#eceff6; --ink:#f6f8fc; --raise:#ffffff;
-  --line:#d7ddeb; --line-lit:#c3cbde;
-  --ice:#2a52c9; --tint:rgba(61,110,247,.07); --warm:#b3612a;
-  --text:#0a0d15; --mute:#4d566b; --faint:#7e8798;
-}
-:root[data-theme="dark"]{
+/* The viewer theme toggle is honoured, but both states stay dark: this
+   identity is committed to one visual world, deliberately. */
+:root[data-theme="dark"],:root[data-theme="light"]{
   --void:#05070d; --ink:#0a0d15; --raise:#0f1421;
   --line:#1b2334; --line-lit:#27324a;
   --ice:#8fb4ff; --tint:rgba(61,110,247,.09); --warm:#e08a52;
