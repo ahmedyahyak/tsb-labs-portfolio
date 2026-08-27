@@ -10,6 +10,7 @@
      · elements clipped inside their own box
      · text under 12px
      · text below the WCAG contrast floor for its size
+     · text touching the screen edge, ie. no gutter
 
    Run:  node audit.mjs            all pages, all widths
          node audit.mjs services   one page
@@ -58,7 +59,10 @@ const PROBE = `(async () => {
   function bgOf(el){while(el){var b=getComputedStyle(el).backgroundColor;
     if(b&&b!=='rgba(0, 0, 0, 0)'&&b!=='transparent')return b;el=el.parentElement;}
     return getComputedStyle(document.body).backgroundColor;}
-  var out={overflow:0,tiny:[],contrast:[],clipped:[],width:window.innerWidth},seen={};
+  var out={overflow:0,tiny:[],contrast:[],clipped:[],edge:[],width:window.innerWidth},seen={};
+  var RNG=document.createRange();
+  function inScroller(e){for(var p=e.parentElement;p;p=p.parentElement){
+    var o=getComputedStyle(p).overflowX;if(o==='auto'||o==='scroll')return true;}return false;}
   var de=document.documentElement;
   out.overflow=Math.max(0,de.scrollWidth-de.clientWidth);
   document.querySelectorAll('body *').forEach(function(el){
@@ -77,6 +81,39 @@ const PROBE = `(async () => {
         var need=big?3:4.5;
         if(r<need){var k2='c'+txt.slice(0,18);if(!seen[k2]){seen[k2]=1;
           out.contrast.push(r.toFixed(2)+':1 need '+need+'  "'+txt.slice(0,40)+'"');}}}
+      /* No gutter. A padding shorthand on an element that is also .wrap, with
+         a zero horizontal slot, silently overrides the gutter and the headline
+         ends up flush against the phone edge. Nothing else here catches that:
+         it does not overflow, clip, or fail contrast, it just looks cheap.
+
+         Measured on the glyphs, not the element box, and skipped inside a
+         horizontal scroller. The box version reported 66 findings that were
+         almost all wide table cells inside an overflow-x:auto wrapper, and
+         full-bleed blocks whose text is centred nowhere near the edge. */
+      if(!inScroller(el)){
+        var lo=Infinity,hi=-Infinity;
+        Array.from(el.childNodes).forEach(function(n){
+          if(n.nodeType!==3||!n.textContent.trim())return;
+          RNG.selectNodeContents(n);
+          Array.from(RNG.getClientRects()).forEach(function(q){
+            if(q.width<1)return;lo=Math.min(lo,q.left);hi=Math.max(hi,q.right);});
+        });
+        /* A Range measures the text as laid out, before the element clips it,
+           so a nowrap+ellipsis row reported glyphs running 48px past a phone
+           that in fact end in an ellipsis well inside it. Clamp to the box
+           when the box clips. */
+        for(var q=el;q&&q!==document.body;q=q.parentElement){
+          if(getComputedStyle(q).overflowX==='visible')continue;
+          var qb=q.getBoundingClientRect();
+          lo=Math.max(lo,qb.left);hi=Math.min(hi,qb.right);}
+        /* Wholly off-screen text is a skip link parked at -9999, not a gutter
+           problem, so it does not count as touching the edge. */
+        var off=hi<0||lo>window.innerWidth;
+        if(lo!==Infinity&&lo<hi&&!off&&(lo<8||hi>window.innerWidth-8)){
+          var k4='e'+txt.slice(0,18);if(!seen[k4]){seen[k4]=1;
+            out.edge.push('glyphs '+Math.round(lo)+' to '+Math.round(hi)+
+              ' of '+window.innerWidth+'  "'+txt.slice(0,34)+'"');}}
+      }
     }
     if(el.scrollWidth>el.clientWidth+2&&cs.overflowX!=='auto'&&cs.overflowX!=='scroll'&&cs.overflow!=='hidden'){
       var k3='o'+(el.className&&el.className.baseVal===undefined?el.className:el.tagName);
@@ -205,10 +242,11 @@ server.listen(0, async () => {
         if (r.clipped.length) bits.push(`clipped: ${r.clipped[0]}`);
         if (r.tiny.length) bits.push(`${r.tiny.length} under 12px`);
         if (r.contrast.length) bits.push(`${r.contrast.length} under contrast floor`);
+        if (r.edge.length) bits.push(`${r.edge.length} touching the edge`);
         if (bits.length) fails++;
         console.log(`  ${page.padEnd(16)} ${String(w).padEnd(5)} ${bits.length ? bits.join(' | ') : 'clean'}`);
         if (process.env.VERBOSE && bits.length) {
-          [...r.clipped, ...r.tiny.slice(0, 6), ...r.contrast.slice(0, 6)]
+          [...r.clipped, ...r.tiny.slice(0, 6), ...r.contrast.slice(0, 6), ...r.edge.slice(0, 6)]
             .forEach((x) => console.log(`        ${x}`));
         }
       }

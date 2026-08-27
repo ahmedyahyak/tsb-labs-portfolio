@@ -382,7 +382,12 @@ div.foot .m{font-family:var(--display);font-weight:800;font-size:1.04rem;
 /* sections and heads */
 .band{padding:var(--sec) 0;border-top:1px solid var(--line)}
 .band:first-of-type{border-top:none}
-.hero,.phero{padding:calc(var(--sec) * .9) 0 var(--sec);border-top:none}
+/* var(--gut), never 0. These sit on an element that is also .wrap, so a
+   padding shorthand with a zero horizontal slot overrides .wrap's gutter and
+   every page headline sits flush against the edge of a phone. It does not
+   overflow or clip, so nothing caught it until the audit started measuring
+   glyph positions against the viewport. */
+.hero,.phero{padding:calc(var(--sec) * .9) var(--gut) var(--sec);border-top:none}
 .bandhead,.sec-head,.case-head,.ev-head{max-width:64ch;margin-bottom:6px}
 .pkick,.kicker,.group-label,.mn-label,.flab{font-family:var(--mono);font-size:var(--orn);
   letter-spacing:.2em;text-transform:uppercase;color:var(--blue-label);font-weight:700;
