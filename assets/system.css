@@ -90,6 +90,34 @@ strong,b{color:var(--text);font-weight:600}
 .prose p + p{margin-top:15px}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
+
+/* ── links ─────────────────────────────────────────────────────────────
+   There was no base rule here, so any link not explicitly styled fell back
+   to the browser's own blue and visited purple. That is what a Word document
+   looks like, and it was showing on the brand lockup and on inline body links.
+
+   Structural links (nav, brand, cards) inherit their colour from context.
+   Only links inside running text get the accent, with a hairline underline
+   that firms up on hover, so a link reads as considered rather than default. */
+a{color:inherit;text-decoration:none}
+a:visited{color:inherit}
+
+.prose a, .body a, .head a, .honest a, .cell p a, p a, li a, .lede a{
+  color:var(--ice);
+  text-decoration:underline;
+  text-decoration-thickness:1px;
+  text-underline-offset:3px;
+  text-decoration-color:color-mix(in srgb, var(--ice) 34%, transparent);
+  transition:color .16s ease, text-decoration-color .16s ease;
+}
+.prose a:visited, .body a:visited, .honest a:visited, p a:visited, li a:visited{color:var(--ice)}
+.prose a:hover, .body a:hover, .head a:hover, .honest a:hover,
+.cell p a:hover, p a:hover, li a:hover, .lede a:hover{
+  color:var(--text);
+  text-decoration-color:var(--blue);
+  text-decoration-thickness:2px;
+}
+
 /* ── nav ───────────────────────────────────────────────────────────────── */
 .nav{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--void) 88%,transparent);
   backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
@@ -217,24 +245,37 @@ section.raise .panel{background:var(--ink)}
 
 /* ── numbered sequence, used only where order is real ──────────────────── */
 .steps{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:36px}
-.step{background:var(--void);padding:24px 26px;display:grid;
-  grid-template-columns:44px 1fr 178px;gap:24px;align-items:start}
-section.raise .step{background:var(--ink)}
-@media(max-width:820px){.step{grid-template-columns:1fr;gap:9px}}
-.step .n{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--blue);line-height:1}
-.step p{font-size:.93rem}
-.step .meta{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
+/* Scoped to my own steps markup. work-with-us uses .step inside .method-grid
+   for entirely different content, and the fixed 44px + 178px columns forced a
+   minimum width that overflowed the page by 132px. */
+.steps > .step{background:var(--void);padding:24px 26px;display:grid;
+  grid-template-columns:minmax(44px,auto) 1fr minmax(0,178px);gap:24px;align-items:start}
+/* minmax rather than a fixed 44px: book.html uses .steps with text labels like
+   "02 A CUSTOMISED PROGRAM" in the first cell, which is 110px of content that
+   a fixed column simply clipped. */
+.step{background:var(--void);padding:24px 26px}
+.method-grid .step,.methods .step{background:transparent;padding:0}
+section.raise .steps > .step{background:var(--ink)}
+@media(max-width:820px){.steps > .step{grid-template-columns:1fr;gap:9px}}
+.steps > .step .n{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--blue);line-height:1}
+.steps > .step p{font-size:.93rem}
+.steps > .step .meta{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--faint);line-height:1.9}
-.step .meta b{display:block;color:var(--text);font-weight:700}
+.steps > .step .meta b{display:block;color:var(--text);font-weight:700}
 
 /* ── footer ────────────────────────────────────────────────────────────── */
 footer{padding:54px 0 70px;border-top:1px solid var(--line)}
-.foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap;
+/* Scoped to the div, never the element. Four legacy pages use
+   <footer class="foot"> whose child is .wrap, and as a flex item .wrap gets
+   min-width:auto and refuses to shrink below its 1180px content, which made
+   those pages scroll sideways by 396px on a phone. */
+footer.foot{display:block}
+div.foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap;
   font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
   text-transform:uppercase;color:var(--faint)}
-.foot a{color:var(--faint);text-decoration:none}
-.foot a:hover{color:var(--text)}
-.foot .m{font-family:var(--display);font-weight:800;font-size:1.04rem;
+div.foot a{color:var(--faint);text-decoration:none}
+div.foot a:hover{color:var(--text)}
+div.foot .m{font-family:var(--display);font-weight:800;font-size:1.04rem;
   letter-spacing:-.02em;color:var(--text);text-transform:none}
 
 /* ═══════════════════════════════════════════════════════════════════════════
