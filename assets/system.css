@@ -18,8 +18,22 @@
   --line:#1b2334;
   --line-lit:#27324a;
 
-  /* brand */
+  /* brand.
+
+     One hue, three jobs, because one value cannot do all three and still be
+     readable. Measured against --ink, the lightest ground text ever sits on:
+       --blue        #3d6ef7  the identity. Borders, rules, large numerals.
+                              4.41:1, which clears the 3:1 floor that large
+                              bold text answers to, and is used nowhere else.
+       --blue-fill   #3767f3  the ground under white text. White on --blue is
+                              4.40:1 and fails; on this it is 4.78:1. Three
+                              percent less luminance, invisible side by side.
+       --blue-label  #4b78f8  blue as small text on dark. 4.94:1 on --ink,
+                              5.12:1 on --void, where --blue managed 4.41.
+     Do not collapse these back into one. They were split by measurement. */
   --blue:#3d6ef7;
+  --blue-fill:#3767f3;
+  --blue-label:#4b78f8;
   --blue-deep:#2a52c9;
   --ice:#8fb4ff;
   --tint:rgba(61,110,247,.09);
@@ -27,15 +41,34 @@
   /* the single warm value. used sparingly, and never next to another accent */
   --warm:#e08a52;
 
-  /* text */
+  /* text. three tiers, and all three now clear 4.5:1 on every ground here.
+     --faint was #5e687e, which measured 3.60:1 on --void and 3.47:1 on --ink
+     and carried most of the metadata on the site. Lifted to #767f96: 5.03:1
+     on --void, 4.85:1 on --ink. Still a clear step below --mute (luminance
+     .212 against .308), so the hierarchy reads exactly as before. */
   --text:#e2e8f6;
   --mute:#8d97ac;
-  --faint:#5e687e;
+  --faint:#767f96;
 
   /* type */
   --display:'Bricolage Grotesque','Inter',system-ui,sans-serif;
   --sans:'Inter',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+
+  /* small-label scale. Two steps, not six.
+
+     --lbl  12px  anything you click, and anything that states a fact the page
+                  does not repeat elsewhere: buttons, links, chips, status
+                  pills, stat captions, table meta.
+     --orn  10.5px  ornament. Eyebrows that label a heading sitting directly
+                  below them, the brand lockup, the logotype. Uppercase mono
+                  at this size with .2em tracking is a deliberate choice and
+                  reads cleanly. Raising it to 12 would flatten it into the
+                  content it is there to introduce.
+     Before this there were sizes at 8, 9, 9.5, 10, 10.5 and 11px. Six steps
+     inside a 3px range is not a hierarchy, it is drift. */
+  --lbl:12px;
+  --orn:10.5px;
 
   /* rhythm */
   --gut:32px;
@@ -48,8 +81,9 @@
 :root[data-theme="dark"],:root[data-theme="light"]{
   --void:#05070d; --ink:#0a0d15; --raise:#0f1421;
   --line:#1b2334; --line-lit:#27324a;
+  --blue:#3d6ef7; --blue-fill:#3767f3; --blue-label:#4b78f8;
   --ice:#8fb4ff; --tint:rgba(61,110,247,.09); --warm:#e08a52;
-  --text:#e2e8f6; --mute:#8d97ac; --faint:#5e687e;
+  --text:#e2e8f6; --mute:#8d97ac; --faint:#767f96;
 }
 
 /* ── reset ─────────────────────────────────────────────────────────────── */
@@ -68,8 +102,10 @@ img,svg,canvas{display:block;max-width:100%}
 
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
 @media(max-width:640px){:root{--gut:20px}}
-.skip{position:absolute;left:-9999px;top:0;background:var(--blue);color:#fff;
-  padding:11px 18px;z-index:99;font-family:var(--mono);font-size:11px;
+/* The skip link is an accessibility control. It was the one thing on the page
+   that could not afford to be 11px. */
+.skip{position:absolute;left:-9999px;top:0;background:var(--blue-fill);color:#fff;
+  padding:11px 18px;z-index:99;font-family:var(--mono);font-size:var(--lbl);
   letter-spacing:.14em;text-transform:uppercase}
 .skip:focus{left:0}
 
@@ -83,12 +119,43 @@ h4{font-size:1.1rem;font-weight:700;line-height:1.2}
 p{color:var(--mute)}
 strong,b{color:var(--text);font-weight:600}
 
-.kick{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:16px}
+.kick{font-family:var(--mono);font-size:var(--orn);letter-spacing:.2em;
+  text-transform:uppercase;color:var(--blue-label);font-weight:700;margin-bottom:16px}
 .lede{font-size:clamp(1.02rem,1.5vw,1.18rem);line-height:1.6;max-width:52ch;color:var(--mute)}
 .prose{max-width:64ch}
 .prose p + p{margin-top:15px}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── rhythm inside running content ───────────────────────────────────────
+   case-studies, book and pay are straight prose: a heading, some paragraphs,
+   another heading, a list. The system styled each of those elements but never
+   the space between them, so consecutive paragraphs fused into one block and
+   every h3 sat flush on the paragraph above it. That is the "not organised
+   into boxes and text" complaint at its root, and it is a rhythm rule rather
+   than a redesign.
+
+   Deliberately keyed off p, ul and ol rather than a bare `div + h3`, because
+   the eyebrow labels are divs sitting directly above their heading and must
+   stay tight to it. */
+p + p{margin-top:15px}
+p + h2,ul + h2,ol + h2,
+p + h3,ul + h3,ol + h3,
+p + h4,ul + h4,ol + h4{margin-top:34px}
+
+/* A heading that follows a finished block needs clearance too, but this is an
+   allow list on purpose. A deny list would have to remember every eyebrow, and
+   an eyebrow div sits directly above its heading and must stay tight to it, so
+   the cost of forgetting one is a broken lockup on every page that uses it. */
+:is(.note,.honest,.panel,.ev,.steps,.grid,.stats,.tiles,.cards,.svc,.svc-grid,
+    .work-grid,.method-grid,.methods,.method-note,.tags,.cta-row,.contact,
+    .founder,.work-group) + :is(h2,h3,h4){margin-top:46px}
+h3 + p,h3 + ul,h3 + ol,h4 + p,h4 + ul{margin-top:14px}
+
+/* The reset zeroes padding on everything, which left list markers hanging
+   outside the content box with nothing to sit in. */
+main ul,main ol{margin-top:14px;padding-left:20px;color:var(--mute)}
+main li{line-height:1.6}
+main li + li{margin-top:10px}
 
 
 /* ── links ─────────────────────────────────────────────────────────────
@@ -124,21 +191,25 @@ a:visited{color:inherit}
 .navin{display:flex;align-items:center;justify-content:space-between;gap:24px;
   height:66px}
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none}
-.mark{width:28px;height:28px;flex:none;background:var(--blue);color:#fff;
-  font-family:var(--mono);font-size:10.5px;font-weight:700;letter-spacing:.02em;
+/* .mark is the logotype, three letters locked in a 28px square. It is a mark,
+   not text, so it keeps its size. */
+.mark{width:28px;height:28px;flex:none;background:var(--blue-fill);color:#fff;
+  font-family:var(--mono);font-size:var(--orn);font-weight:700;letter-spacing:.02em;
   display:grid;place-items:center}
 .bt{font-family:var(--display);font-weight:800;font-size:1.02rem;
   letter-spacing:-.02em;color:var(--text);line-height:1}
-.bs{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.17em;
+/* 8px was past the point where the tagline was doing any work. 10px keeps it
+   subordinate to the 16px wordmark it sits under, and can actually be read. */
+.bs{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.15em;
   text-transform:uppercase;color:var(--faint);margin-top:2px}
 .navlinks{display:flex;gap:26px}
 .navlinks a{font-size:13.5px;color:var(--mute);text-decoration:none;transition:color .15s}
 .navlinks a:hover,.navlinks a[aria-current="page"]{color:var(--text)}
-.navcta{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+.navcta{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.13em;
   text-transform:uppercase;font-weight:700;color:var(--text);
   border:1px solid var(--blue);padding:10px 16px;text-decoration:none;
   transition:background .16s,color .16s;white-space:nowrap}
-.navcta:hover{background:var(--blue);color:#fff}
+.navcta:hover{background:var(--blue-fill);color:#fff}
 @media(max-width:880px){.navlinks{display:none}}
 
 /* ── sections ──────────────────────────────────────────────────────────── */
@@ -159,14 +230,20 @@ section:first-of-type{border-top:none}
 .cell{background:var(--void);padding:28px 26px 30px;display:flex;
   flex-direction:column;gap:9px}
 section.raise .cell{background:var(--ink)}
-.cell .tag{font-family:var(--mono);font-size:9px;letter-spacing:.16em;
+/* These two are div eyebrows, not chips. Every one of them is a short label
+   sitting directly above the heading it introduces: "Pillar 01" over "Quantum
+   optimisation", "Research" over "Deep Tech Research". They take the ornament
+   step. The span chips in .tag-row and .tags are a different thing entirely,
+   they carry the stack and the status, and those stay at the label step. */
+.cell .tag{font-family:var(--mono);font-size:var(--orn);letter-spacing:.16em;
   text-transform:uppercase;color:var(--warm);font-weight:700}
-.cell .role{font-family:var(--mono);font-size:9px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--blue);font-weight:700}
+.cell .role{font-family:var(--mono);font-size:var(--orn);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--blue-label);font-weight:700}
 .cell p{font-size:.94rem;line-height:1.56}
-.cell a{color:var(--ice);text-decoration:none;font-size:.9rem;
+/* was declared twice, .9rem then 10px, so 10px silently won. One value now. */
+.cell a{color:var(--ice);text-decoration:none;
   font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;
-  font-size:10px;font-weight:700;margin-top:auto;padding-top:8px}
+  font-size:var(--lbl);font-weight:700;margin-top:auto;padding-top:8px}
 .cell a:hover{text-decoration:underline;text-underline-offset:3px}
 
 /* ── two column split ──────────────────────────────────────────────────── */
@@ -178,7 +255,8 @@ section.raise .cell{background:var(--ink)}
   gap:1px;background:var(--line);border:1px solid var(--line);margin-top:34px}
 .stat{background:var(--void);padding:18px 20px}
 section.raise .stat{background:var(--ink)}
-.stat .k{font-family:var(--mono);font-size:9px;letter-spacing:.15em;
+/* The caption is what makes the number mean anything. It is content, not trim. */
+.stat .k{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.12em;
   text-transform:uppercase;color:var(--faint);font-weight:700}
 .stat .v{font-family:var(--mono);font-size:1.55rem;font-weight:700;
   font-variant-numeric:tabular-nums;color:var(--text);margin-top:6px;line-height:1}
@@ -189,7 +267,7 @@ section.raise .stat{background:var(--ink)}
 .honest{border:1px solid var(--line);border-left:2px solid var(--warm);
   background:var(--ink);padding:26px 28px;margin-top:34px;max-width:72ch}
 section.raise .honest{background:var(--void)}
-.honest .k{font-family:var(--mono);font-size:10px;letter-spacing:.17em;
+.honest .k{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.15em;
   text-transform:uppercase;color:var(--warm);font-weight:700}
 .honest p{margin-top:11px;font-size:.99rem}
 .honest p + p{margin-top:12px}
@@ -197,8 +275,10 @@ section.raise .honest{background:var(--void)}
 /* ── 3D scenes ─────────────────────────────────────────────────────────── */
 .scene{touch-action:none;cursor:grab;width:100%;height:100%}
 .scene.drag{cursor:grabbing}
+/* "Drag to rotate" is the only thing telling anyone the hero is interactive.
+   That is an instruction, not decoration. */
 .hint{position:absolute;left:var(--gut);bottom:24px;z-index:3;font-family:var(--mono);
-  font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);
+  font-size:var(--lbl);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
   border:1px solid var(--line);padding:6px 10px;transition:opacity .6s;background:var(--void)}
 .hint.gone{opacity:0}
 
@@ -224,16 +304,16 @@ section.raise .panel{background:var(--ink)}
   flex-direction:column;gap:20px;justify-content:center}
 @media(max-width:900px){.panel .side{border-left:none;border-top:1px solid var(--line)}}
 
-.btn{align-self:flex-start;font-family:var(--mono);font-size:9.5px;
-  letter-spacing:.15em;text-transform:uppercase;font-weight:700;color:var(--text);
+.btn{align-self:flex-start;font-family:var(--mono);font-size:var(--lbl);
+  letter-spacing:.13em;text-transform:uppercase;font-weight:700;color:var(--text);
   background:transparent;border:1px solid var(--blue);padding:11px 18px;
   cursor:pointer;transition:background .16s,color .16s}
-.btn:hover{background:var(--blue);color:#fff}
+.btn:hover{background:var(--blue-fill);color:#fff}
 
 /* the assembling readout under the hero headline */
 .now{display:flex;align-items:center;gap:14px;border-left:2px solid var(--warm);
   padding:10px 0 10px 16px;margin-top:34px}
-.now .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.17em;
+.now .k{font-family:var(--mono);font-size:var(--orn);letter-spacing:.17em;
   text-transform:uppercase;color:var(--faint);font-weight:700;white-space:nowrap}
 .now .v{font-family:var(--display);font-weight:700;font-size:1.08rem;
   letter-spacing:-.015em;color:var(--text)}
@@ -253,14 +333,24 @@ section.raise .panel{background:var(--ink)}
 /* minmax rather than a fixed 44px: book.html uses .steps with text labels like
    "02 A CUSTOMISED PROGRAM" in the first cell, which is 110px of content that
    a fixed column simply clipped. */
-.step{background:var(--void);padding:24px 26px}
-.method-grid .step,.methods .step{background:transparent;padding:0}
+/* A .step that is NOT inside .steps is a plain card, and is given the card
+   treatment down in the legacy layer alongside .tile and .card.
+
+   There used to be a `.method-grid .step,.methods .step{background:transparent;
+   padding:0}` rule here, added to kill a 132px overflow. The overflow was
+   really caused by the three fixed columns above, and scoping those to
+   `.steps > .step` already fixed it. The transparent override was doing
+   nothing but stripping the box off work-with-us, which rendered the four
+   method cards as one unbroken slab with the text of each running into the
+   next. Removed. The scoping is what holds the overflow, not this. */
 section.raise .steps > .step{background:var(--ink)}
 @media(max-width:820px){.steps > .step{grid-template-columns:1fr;gap:9px}}
 .steps > .step .n{font-family:var(--mono);font-size:1.45rem;font-weight:700;color:var(--blue);line-height:1}
 .steps > .step p{font-size:.93rem}
-.steps > .step .meta{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;
-  text-transform:uppercase;color:var(--faint);line-height:1.9}
+/* The meta column carries the deliverable and the timescale. That is the part
+   a client actually scans for, so it stops being 9.5px. */
+.steps > .step .meta{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.11em;
+  text-transform:uppercase;color:var(--faint);line-height:1.75}
 .steps > .step .meta b{display:block;color:var(--text);font-weight:700}
 
 /* ── footer ────────────────────────────────────────────────────────────── */
@@ -271,7 +361,7 @@ footer{padding:54px 0 70px;border-top:1px solid var(--line)}
    those pages scroll sideways by 396px on a phone. */
 footer.foot{display:block}
 div.foot{display:flex;justify-content:space-between;gap:22px;flex-wrap:wrap;
-  font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;
+  font-family:var(--mono);font-size:var(--lbl);letter-spacing:.11em;
   text-transform:uppercase;color:var(--faint)}
 div.foot a{color:var(--faint);text-decoration:none}
 div.foot a:hover{color:var(--text)}
@@ -294,68 +384,170 @@ div.foot .m{font-family:var(--display);font-weight:800;font-size:1.04rem;
 .band:first-of-type{border-top:none}
 .hero,.phero{padding:calc(var(--sec) * .9) 0 var(--sec);border-top:none}
 .bandhead,.sec-head,.case-head,.ev-head{max-width:64ch;margin-bottom:6px}
-.pkick,.kicker,.group-label,.mn-label,.flab{font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.2em;text-transform:uppercase;color:var(--blue);font-weight:700;
+.pkick,.kicker,.group-label,.mn-label,.flab{font-family:var(--mono);font-size:var(--orn);
+  letter-spacing:.2em;text-transform:uppercase;color:var(--blue-label);font-weight:700;
   margin-bottom:14px;display:block}
-.flab{color:var(--faint);margin-bottom:10px}
-.sub,.sec-note,.method-note,.foot-note{color:var(--mute);max-width:62ch}
-.sec-note,.method-note{font-size:.95rem;margin-top:16px}
+/* .flab is not an eyebrow. Nothing sits under it but a list of 14px links, so
+   it is the heading for that column and was the quietest thing in the footer. */
+.flab{color:var(--faint);margin-bottom:10px;font-size:var(--lbl);letter-spacing:.14em}
+/* .mn-label is a span, but it is set block and sits directly above an h3, so
+   it is an eyebrow by role and keeps the ornament step. */
+.sub,.sec-note,.foot-note{color:var(--mute);max-width:62ch}
+.sec-note{font-size:.95rem;margin-top:16px}
 .h{font-family:var(--display);font-weight:700;letter-spacing:-.025em}
 
 /* card families all resolve to one surface */
-.tiles,.svc-grid,.work-grid,.method-grid,.methods,.cards{display:grid;
+.tiles,.svc-grid,.work-grid,.method-grid,.cards{display:grid;
   grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:1px;
   background:var(--line);border:1px solid var(--line);margin-top:36px}
-.tile,.card,.svc,.case,.ev,.rec{background:var(--void);padding:26px 24px 28px;
+
+/* .methods is a row of payment method chips on book.html: USDT, BTC, Bank
+   transfer. It was in the card grid family above, which handed seven one word
+   spans a 262px column each on a bare --line ground, so it painted as a grey
+   slab with words floating in it and no box on anything. It is a chip row, so
+   it is now built like one, matching .chip and .tag. */
+.methods{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.methods .m{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.09em;
+  text-transform:uppercase;font-weight:700;color:var(--faint);
+  border:1px solid var(--line);padding:6px 11px;display:inline-block}
+/* .case is NOT a card. It is only ever used as <section class="case">, one per
+   case study, and being in this family gave a full page section a card's 26px
+   padding and flex column in place of the section rhythm, so three long case
+   studies ran together with no separation and no breathing room. It is a
+   section, so it is left to the section rules. */
+.tile,.card,.svc,.ev,.rec,.step{background:var(--void);padding:26px 24px 28px;
   display:flex;flex-direction:column;gap:9px;text-decoration:none}
-.band.raise .tile,.band.raise .card,section.raise .tile,section.raise .card{background:var(--ink)}
+.band.raise .tile,.band.raise .card,.band.raise .step,
+section.raise .tile,section.raise .card,section.raise .step{background:var(--ink)}
 .tile h3,.card h3,.svc h3,.case h3,.tile h4,.card h4{font-family:var(--display);
   font-weight:700;letter-spacing:-.018em;color:var(--text);line-height:1.2}
-.tile p,.card p,.svc p,.case p,.ev p{color:var(--mute);font-size:.94rem;line-height:1.56}
-.card-top,.tag-row,.ev-row,.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+/* .case p dropped with it: these are 300 word paragraphs of long form prose,
+   and .94rem is a card size, not a reading size. They take body copy. */
+.tile p,.card p,.svc p,.ev p{color:var(--mute);font-size:.94rem;line-height:1.56}
+.card-top,.tag-row,.ev-row,.row,.case-head,.tags{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .card-index,.step-num,.n{font-family:var(--mono);font-size:1.35rem;font-weight:700;
   color:var(--blue);line-height:1;font-variant-numeric:tabular-nums}
-.card-link,.golink,.link-line a{font-family:var(--mono);font-size:10px;font-weight:700;
-  letter-spacing:.14em;text-transform:uppercase;color:var(--ice);text-decoration:none;
-  margin-top:auto;padding-top:10px;display:inline-block}
+/* .n is a big numeral in a .steps row, where index.html puts "A", "B", "C".
+   services.html reuses it inside a tile for a whole category label, and
+   "01 · PLATFORMS AND APPS" at 21.6px wrapped onto two lines and shouted over
+   the heading it was meant to introduce. Inside a tile it is an eyebrow.
+   --blue-label rather than --blue because at 10.5px it has to clear 4.5:1
+   rather than the 3:1 it was getting away with at 21.6px. */
+.tile .n{font-size:var(--orn);letter-spacing:.16em;line-height:1.5;
+  color:var(--blue-label)}
+/* These are the outbound links on every card. They were 10px, which is small
+   for the one thing on the card you are meant to click.
+
+   Some of them are bare URLs with no spaces to break on, so at the larger size
+   they ran past the card edge in the two column layout. overflow-wrap lets a
+   URL break mid token, which is the only place it can break. */
+.card-link,.golink,.link-line a{font-family:var(--mono);font-size:var(--lbl);font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ice);text-decoration:none;
+  margin-top:auto;padding-top:10px;display:inline-block;
+  max-width:100%;overflow-wrap:anywhere}
+.card-link a,.link-line a{overflow-wrap:anywhere}
 .card-link:hover,.golink:hover{text-decoration:underline;text-underline-offset:3px}
 .work-group{margin-top:44px}
 
+/* ── the evidence table ──────────────────────────────────────────────────
+   .ev is a standalone block, not a cell inside one of the grids above. The
+   card family gave it a --void background and relied on a parent grid's 1px
+   line for its edge, but it has no parent grid, so a --void box sat on a
+   --void section and there was no box at all: the rows read as stray indented
+   text. It gets a real edge, and the rows become label against value.
+
+   The value was also collapsing under its own label on a phone, because the
+   row was a centred flex line that simply wrapped. Now the label takes the
+   remaining space and the value stays on the right and never breaks. */
+.ev{background:var(--ink);border:1px solid var(--line);gap:0;margin-top:18px;
+  padding:8px 22px 18px;max-width:72ch}
+
+/* A case study is long form reading, and with .case out of the card family its
+   paragraphs were running the full 1180px, which is about 150 characters a
+   line. Held to the same measure the rest of the system uses. */
+.case p,.case ul,.case ol{max-width:68ch}
+.tags{margin-top:26px}
+.case .golink{margin-top:20px}
+.ev-head{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint);font-weight:700;
+  padding:12px 0 4px;margin-bottom:0}
+.ev-row{justify-content:space-between;gap:18px;align-items:baseline;
+  border-top:1px solid var(--line);padding:11px 0 3px}
+.ev-row span{color:var(--mute);font-size:.94rem;line-height:1.5;flex:1 1 60%}
+.ev-row b{font-family:var(--mono);font-weight:700;color:var(--text);
+  font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+
 /* chips, status pills */
-.chip,.tag,.tags span,.status,.nda{font-family:var(--mono);font-size:9px;
-  letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--faint);
+/* Chips carry the stack, the status and the confidentiality flag. That is the
+   densest real information on the portfolio and case study pages, and it was
+   set at 9px. Tracking comes down as the size goes up so the rows still fit. */
+.chip,.tag,.tags span,.status,.nda{font-family:var(--mono);font-size:var(--lbl);
+  letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--faint);
   border:1px solid var(--line);padding:4px 9px;display:inline-block}
 .status.live,.s-live,.live{color:var(--warm);border-color:var(--warm)}
 .nda{color:var(--faint)}
 
 /* notes */
-.note,.founder{border:1px solid var(--line);border-left:2px solid var(--warm);
+.note,.founder,.method-note{border:1px solid var(--line);border-left:2px solid var(--warm);
   background:var(--ink);padding:24px 26px;margin-top:30px;max-width:72ch}
-.note p,.founder p{color:var(--mute);font-size:.97rem}
+.note p,.founder p,.method-note p{color:var(--mute);font-size:.97rem}
+/* The after delivery block was a bare eyebrow, heading and paragraph with no
+   treatment at all, sitting hard against the bottom of the method cards. It is
+   a note about what happens next, so it takes the note treatment and enough
+   clearance to read as its own block rather than as spill from the grid. */
+.method-note{margin-top:38px}
+.method-note h3{margin-bottom:10px}
+section.raise .note,section.raise .method-note{background:var(--void)}
 .founder{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start}
 @media(max-width:640px){.founder{grid-template-columns:1fr}}
-.founder-tile,.monogram{width:56px;height:56px;background:var(--blue);color:#fff;
+.founder-tile,.monogram{width:56px;height:56px;background:var(--blue-fill);color:#fff;
   font-family:var(--mono);font-weight:700;font-size:1.05rem;display:grid;place-items:center}
-.monogram{width:28px;height:28px;font-size:10.5px}
-.role{font-family:var(--mono);font-size:9px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--blue);font-weight:700}
+/* initials locked in a 28px square, a mark rather than text */
+.monogram{width:28px;height:28px;font-size:var(--orn)}
+/* same reasoning: .role is always an eyebrow above a heading */
+.role{font-family:var(--mono);font-size:var(--orn);letter-spacing:.16em;
+  text-transform:uppercase;color:var(--blue-label);font-weight:700}
 
 /* buttons */
-.btn-primary{background:var(--blue);color:#fff;border:1px solid var(--blue)}
+.btn-primary{background:var(--blue-fill);color:#fff;border:1px solid var(--blue-fill)}
 .btn-primary:hover{background:var(--blue-deep);border-color:var(--blue-deep)}
 .btn-ghost,.ghost{background:transparent;border:1px solid var(--line-lit);color:var(--text)}
 .btn-ghost:hover,.ghost:hover{border-color:var(--blue)}
-.btn-primary,.btn-ghost,.ghost,.cta{font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.14em;text-transform:uppercase;font-weight:700;padding:12px 20px;
+.btn-primary,.btn-ghost,.ghost,.cta{font-family:var(--mono);font-size:var(--lbl);
+  letter-spacing:.13em;text-transform:uppercase;font-weight:700;padding:12px 20px;
   text-decoration:none;display:inline-block;cursor:pointer;transition:all .16s}
 .cta-row,.contact{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .close{margin-top:32px}
 
 /* pricing */
 .amt{font-family:var(--mono);font-size:1.5rem;font-weight:700;color:var(--text);
-  font-variant-numeric:tabular-nums}
+  font-variant-numeric:tabular-nums;line-height:1.15}
+/* the qualifier ran straight into the figure at almost the figure's size, so
+   "$5,500setup, then $550 monthly" read as one string */
+.amt small{display:block;font-size:.5em;font-weight:400;color:var(--mute);
+  letter-spacing:.02em;margin-top:4px}
 .right{text-align:right}
 @media(max-width:640px){.right{text-align:left}}
+
+/* ── standalone pricing rows ─────────────────────────────────────────────
+   book.html lists twelve tiers as bare .svc divs rather than cards inside a
+   .svc-grid, so they inherited the card treatment but never the grid line
+   that draws a card's edge: an invisible box with the price adrift somewhere
+   to the right of the description. As a direct child of .wrap a .svc is a
+   row, so it is built as one. Inside .svc-grid, on services.html, it stays
+   the card it already was. */
+.wrap > .svc{flex-direction:row;justify-content:space-between;align-items:center;
+  gap:26px;border:1px solid var(--line);background:var(--ink);margin-top:12px}
+.wrap > .svc > :first-child{flex:1 1 auto;min-width:0}
+.wrap > .svc .right{flex:0 0 auto;display:flex;flex-direction:column;
+  align-items:flex-end;gap:12px}
+/* .rec is the recommended tier and had no treatment separating it from the
+   rest, which is the whole point of the class */
+.wrap > .svc.rec{border-color:var(--blue)}
+@media(max-width:640px){
+  .wrap > .svc{flex-direction:column;align-items:stretch;gap:16px}
+  .wrap > .svc .right{align-items:flex-start}
+}
 
 /* footer */
 .footin,.foot-inner{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
@@ -366,9 +558,11 @@ div.foot .m{font-family:var(--display);font-weight:800;font-size:1.04rem;
 .fsm{color:var(--mute);font-size:.88rem;line-height:1.55}
 .footcol a,.foot-links a{color:var(--mute);text-decoration:none;font-size:.9rem}
 .footcol a:hover,.foot-links a:hover{color:var(--text)}
+/* The right hand span here is a full sentence of confidentiality wording, not
+   a label. Uppercase mono at 10px was the wrong place to put a sentence. */
 .footbar{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;
   padding-top:22px;border-top:1px solid var(--line);font-family:var(--mono);
-  font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  font-size:var(--lbl);letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
 
 /* the old scroll-reveal is neutralised; content must never start hidden */
 .reveal{opacity:1;transform:none}
@@ -378,3 +572,11 @@ h1 + .sub, h1 + .lede, h1 + p,
 h2 + .sub, h2 + .lede, h2 + p,
 .h + .sub, .h + p{margin-top:20px}
 .hero,.phero{padding-bottom:calc(var(--sec) * .55)}
+
+/* The hero already pays a bottom margin, and the first section then paid a
+   full one on top of it. On a short hero that stacked into roughly 180px of
+   empty screen with no rule and no content in it, which reads as a page that
+   failed to load rather than as breathing room. The first section after a hero
+   takes a half stop. Every later section keeps the full rhythm. */
+.phero + section,.hero + section,.phero + .band,.hero + .band{
+  padding-top:calc(var(--sec) * .5)}
