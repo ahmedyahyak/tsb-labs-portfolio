@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Research | TSB Labs</title>
+<meta name="description" content="Deep Tech Research at TSB Labs. Four pillars: quantum optimisation, advanced AI systems, autonomous systems and frontier computing. Applied research chosen for commercial reach.">
+<meta property="og:title" content="Research | TSB Labs">
+<meta property="og:description" content="Four pillars, chosen for reach rather than novelty. Applied research at the frontier of intelligent systems.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%233d6ef7'/%3E%3Ctext x='32' y='42' font-family='monospace' font-size='24' font-weight='700' fill='%23fff' text-anchor='middle'%3ETSB%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/assets/fonts.css">
+<link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/scenes.js"></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap navin">
+    <a class="brand" href="/">
+      <span class="mark">TSB</span>
+      <span><span class="bt">TSB Labs</span><span class="bs">Deep tech research</span></span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="/research.html" aria-current="page">Research</a>
+      <a href="/services.html">Services</a>
+      <a href="/portfolio.html">Portfolio</a>
+      <a href="/products.html">Products</a>
+      <a href="/case-studies.html">Case studies</a>
+      <a href="/work-with-us.html">How we work</a>
+    </nav>
+    <a class="navcta" href="/book.html">Book a call</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <div class="kick">Deep Tech Research / Department one</div>
+        <h1>Where classical methods run out.</h1>
+        <p class="lede" style="margin-top:22px">Applied research at the frontier of
+          intelligent systems. Every pillar was chosen because a result in it becomes
+          commercially usable within three to five years. Research that cannot travel
+          that distance is interesting, and it is somebody else's work.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="raise">
+    <div class="wrap">
+      <div class="head">
+        <div class="kick">Live</div>
+        <h2>Most searches stop at the first good answer.</h2>
+        <p class="lede">Below is a real optimisation landscape. Every valley is a solution
+          and only one of them is the best one. Twenty six independent searches run the
+          same classical annealing across it. Watch where they end up.</p>
+      </div>
+
+      <div class="panel">
+        <div class="canvas-hold">
+          <canvas id="landscape" class="scene" aria-label="Optimisation landscape. Drag to rotate."></canvas>
+          <div class="hint">Drag to rotate</div>
+        </div>
+        <div class="side">
+          <div>
+            <div class="kick" style="margin-bottom:9px">What you are watching</div>
+            <p style="font-size:.95rem">Each walker descends the surface with a little
+              randomness, and the randomness cools as it goes. That is annealing, and it
+              is a genuinely good method. <strong>It still lands most of them in a valley
+              that is not the deepest one.</strong></p>
+          </div>
+          <div class="stats">
+            <div class="stat"><div class="k">Searches</div><div class="v" id="sW">0</div></div>
+            <div class="stat"><div class="k">Settled</div><div class="v" id="sS">0</div></div>
+            <div class="stat"><div class="k">Found best</div><div class="v hot" id="sB">0</div></div>
+          </div>
+          <button class="btn" id="reseed" type="button">Run it again</button>
+        </div>
+      </div>
+
+      <div class="prose" style="margin-top:34px">
+        <p><strong>This is the whole argument, and it is not an abstraction.</strong> A
+          fleet planner sequencing thirty stops, a terminal allocating berths across a
+          week, a fund rebalancing under constraints, all of them are searching a space
+          too large to enumerate. They do not fail loudly. They settle for the first
+          acceptable answer and never learn what the better one was worth.</p>
+        <p>The gap between the valley you land in and the deepest valley on the surface
+          is the number this department exists to close.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <div class="kick">The four pillars</div>
+        <h2>Chosen for reach rather than novelty.</h2>
+      </div>
+      <div class="grid g2">
+        <div class="cell">
+          <div class="tag">Pillar 01</div>
+          <h3>Quantum optimisation</h3>
+          <p>Hybrid quantum and classical solvers applied to combinatorial problems at
+            industrial scale: berth allocation, routing, scheduling, supply chain design,
+            portfolio construction, and any problem class where classical methods reach
+            their tractability limits under real world disruption.</p>
+          <p>Both gate based approaches and quantum annealing, <strong>benchmarked against
+            the best available classical baseline rather than against nothing</strong>,
+            because a speedup measured against a weak comparison is not a result.</p>
+        </div>
+        <div class="cell">
+          <div class="tag">Pillar 02</div>
+          <h3>Advanced AI systems</h3>
+          <p>Intelligence beyond the general purpose model. Autonomous reasoning agents,
+            multi model orchestration, and domain specialised systems for industrial,
+            financial and logistics applications.</p>
+          <p>The focus is <strong>the layer that sits between a foundation model and a
+            production system</strong>, which is where the commercial value is actually
+            captured and where almost nobody is doing careful work.</p>
+        </div>
+        <div class="cell">
+          <div class="tag">Pillar 03</div>
+          <h3>Autonomous systems</h3>
+          <p>The intelligence layer for systems that adapt, reason and act without constant
+            human supervision: perception, planning and control architectures under
+            genuine uncertainty.</p>
+          <p>Designed to integrate with existing hardware platforms or to deploy as
+            software defined intelligence, rather than requiring a fleet to be replaced
+            before anything can be tested.</p>
+        </div>
+        <div class="cell">
+          <div class="tag">Pillar 04</div>
+          <h3>Frontier computing</h3>
+          <p>Research into what comes next. Neuromorphic computing, photonic systems and
+            novel compute architectures that redefine the limits of intelligence and
+            efficiency.</p>
+          <p>This pillar earns its place by keeping the venture <strong>at the edge of the
+            field rather than comfortably inside it</strong>. It is the one with the
+            longest horizon and it is deliberately funded anyway.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="raise">
+    <div class="wrap split">
+      <div>
+        <div class="kick">How research runs</div>
+        <h2>A result is a comparison, or it is a press release.</h2>
+      </div>
+      <div class="prose">
+        <p><strong>Problem scoping first.</strong> A joint session with your operations
+          leadership to find the single problem where an improvement would carry the most
+          commercial and operational weight. No preselection, and no assumption that the
+          interesting problem is the valuable one.</p>
+        <p><strong>Then the baseline, before anything else.</strong> We establish what the
+          best classical method achieves on your data. Every subsequent claim is measured
+          against that number, and it is stated even when it is unflattering.</p>
+        <p><strong>Every engagement carries scientific sign off.</strong> Deliverables are
+          benchmarked results, documented pilots and, where the client wants it, co
+          authored publications. Each one is independently verifiable, which is the point.</p>
+        <p>Research engagements can run alone, or hand directly to TSB Engines for
+          production deployment. <strong>The handoff happens inside one venture</strong>,
+          which is the reason both departments exist under one roof.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="head">
+        <div class="kick">The state of this work</div>
+        <h2>What is true today.</h2>
+      </div>
+      <div class="honest">
+        <div class="k">Stated plainly, because you will check</div>
+        <p><b>This department is a research direction, not a product line.</b> Nothing from
+          it has been deployed to a client. There is no benchmarked result to publish yet.
+          No quantum hardware was involved in the landscape above, which is a classical
+          annealer running in your browser.</p>
+        <p>When there is a result, it will appear on this page with the numbers attached,
+          the method open to argument, and the classical baseline it was measured against
+          named. <b>A claim we cannot evidence costs more than the silence does</b>,
+          particularly in a market this small.</p>
+        <p>The engineering department is a different matter and ships today.
+          <a href="/services.html">What TSB Engines builds &rarr;</a></p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <span class="m">TSB Labs</span>
+    <span>Deep tech research / Intelligent systems</span>
+    <span><a href="/">Home</a> &nbsp; <a href="/services.html">Services</a> &nbsp; <a href="/book.html">Book a call</a></span>
+    <span>Sultanate of Oman</span>
+  </div>
+</footer>
+</body>
+</html>
