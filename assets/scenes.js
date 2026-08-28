@@ -2,11 +2,26 @@
    TSB Labs 3D scenes. No libraries, no build step, no CDN.
 
    Software perspective projection onto a 2D canvas: rotate, tilt, project,
-   depth sort, draw. Two scenes share the orbit control and the projector.
+   depth sort, draw. Two scenes share the orbit control, the projector and the
+   sprite cache.
 
    The geometry is not decoration. Scene one's forms are the capability list.
    Scene two is a real optimisation landscape with real annealing running on
    it, which is the argument the company makes, shown rather than asserted.
+
+   ── why scene one is fitted to a DOM element ─────────────────────────────
+   The canvas covers the whole hero, but the structure is projected into the
+   rect of #sceneZone, a grid cell that can never overlap the copy. The first
+   version centred the scene at 68% of the canvas width, which put particles
+   underneath the subheading at laptop widths. Text must never share pixels
+   with the scene, and CSS layout is the only thing that can promise that, so
+   the scene asks the layout where it is allowed to be.
+
+   ── why spheres are stamped, not drawn ───────────────────────────────────
+   A flat disc reads as a dot on a screen; a radial gradient lit from the top
+   left reads as a small sphere. Building that gradient 132 times a frame is
+   the wrong price, so each colour is rendered once into an offscreen sprite
+   and stamped with drawImage, which is cheaper than the flat arcs were.
    ═══════════════════════════════════════════════════════════════════════════ */
 (function(){
 'use strict';
@@ -15,12 +30,48 @@ var REDUCE = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function token(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
+function rgbOf(c){
+  c = String(c).trim();
+  var m = c.match(/^#([0-9a-f]{6})$/i);
+  if(m) return [0,2,4].map(function(i){ return parseInt(m[1].substr(i,2),16); });
+  m = c.match(/(-?[\d.]+)\D+(-?[\d.]+)\D+(-?[\d.]+)/);
+  if(m) return [+m[1], +m[2], +m[3]];
+  return [61,110,247];
+}
+function mix(a, b, t){
+  var x=rgbOf(a), y=rgbOf(b);
+  return 'rgb('+Math.round(x[0]+(y[0]-x[0])*t)+','+Math.round(x[1]+(y[1]-x[1])*t)+','
+               +Math.round(x[2]+(y[2]-x[2])*t)+')';
+}
 
-/* Pointer drag orbits the scene; releasing lets the spin carry and decay. */
+/* One lit sphere, drawn once per colour and stamped ever after. */
+function sphereSprite(color){
+  var s=document.createElement('canvas'); s.width=64; s.height=64;
+  var c=s.getContext('2d');
+  var g=c.createRadialGradient(24,22,3,32,32,30);
+  g.addColorStop(0, mix(color,'#ffffff',0.62));
+  g.addColorStop(0.42, color);
+  g.addColorStop(1, mix(color,'#05070d',0.55));
+  c.fillStyle=g; c.beginPath(); c.arc(32,32,30,0,Math.PI*2); c.fill();
+  return s;
+}
+/* The soft additive halo behind anything warm. */
+function glowSprite(color){
+  var s=document.createElement('canvas'); s.width=96; s.height=96;
+  var c=s.getContext('2d');
+  var g=c.createRadialGradient(48,48,4,48,48,46);
+  g.addColorStop(0, mix(color,'#05070d',0.35));
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.fillStyle=g; c.beginPath(); c.arc(48,48,46,0,Math.PI*2); c.fill();
+  return s;
+}
+
+/* Pointer drag orbits the scene; releasing lets the spin carry and decay.
+   pan-y at the CSS level keeps vertical swipes scrolling the page on touch. */
 function orbit(cv, st, onFirstDrag){
-  var down=false, px=0, py=0, first=true;
+  var down=false, px=0, py=0, first=true, mouse=false;
   cv.addEventListener('pointerdown', function(e){
-    down=true; cv.classList.add('drag');
+    down=true; cv.classList.add('drag'); mouse = e.pointerType==='mouse';
     try{ cv.setPointerCapture(e.pointerId); }catch(_){}
     px=e.clientX; py=e.clientY;
     if(first){ first=false; onFirstDrag && onFirstDrag(); }
@@ -28,7 +79,7 @@ function orbit(cv, st, onFirstDrag){
   cv.addEventListener('pointermove', function(e){
     if(!down) return;
     st.ang  -= (e.clientX-px)*0.006;
-    st.tilt  = Math.max(-0.45, Math.min(1.15, st.tilt + (e.clientY-py)*0.004));
+    if(mouse) st.tilt = Math.max(-0.45, Math.min(1.15, st.tilt + (e.clientY-py)*0.004));
     st.spin  = -(e.clientX-px)*0.0004;
     px=e.clientX; py=e.clientY;
   });
@@ -41,7 +92,7 @@ function orbit(cv, st, onFirstDrag){
 }
 
 /* Keeps the backing store matched to CSS pixels and the device ratio. */
-function sizer(cv, ctx){
+function sizer(cv, ctx, onFit){
   var s = {w:0, h:0};
   function fit(){
     var dpr = Math.min(window.devicePixelRatio||1, 2);
@@ -49,6 +100,7 @@ function sizer(cv, ctx){
     cv.width  = Math.round(s.w*dpr);
     cv.height = Math.round(s.h*dpr);
     ctx.setTransform(dpr,0,0,dpr,0,0);
+    onFit && onFit();
   }
   fit();
   window.addEventListener('resize', fit, {passive:true});
@@ -58,6 +110,7 @@ function sizer(cv, ctx){
 /* ── Scene one: the venture assembling itself ──────────────────────────── */
 function ventureScene(cv){
   var ctx=cv.getContext('2d'), N=132, R=52;
+  var zone=document.getElementById('sceneZone');
   var FORMS=[
     {name:'Quantum optimisation', at:function(i,t){
       var a=t*Math.PI*6, s=(i%2)?1:-1, r=R*0.55;
@@ -78,15 +131,37 @@ function ventureScene(cv){
 
   var P=[], i;
   for(i=0;i<N;i++) P.push({x:(Math.random()-0.5)*R*3, y:(Math.random()-0.5)*R*3,
-                            z:(Math.random()-0.5)*R*3, tx:0, ty:0, tz:0});
+                            z:(Math.random()-0.5)*R*3, tx:0, ty:0, tz:0, wait:0});
   var form=0, HOLD=4200, tSwitch=0, pinned=false;
   var st={ang:-0.5, tilt:0.12, spin:0};
-  var S=sizer(cv,ctx);
+
+  /* Where the layout says the scene may live, in canvas coordinates. */
+  var Z={cx:0, cy:0, focal:400};
+  function readZone(){
+    if(!zone){ Z.cx=S.w*0.5; Z.cy=S.h*0.5; Z.focal=Math.min(S.w,S.h)*1.0; return; }
+    var zr=zone.getBoundingClientRect(), cr=cv.getBoundingClientRect();
+    Z.cx = zr.left - cr.left + zr.width/2;
+    Z.cy = zr.top  - cr.top  + zr.height/2;
+    /* Sized so the widest morph state stays inside the zone with margin:
+       projected halfwidth is focal/tz * (R * 1.5) at tz around 205. */
+    Z.focal = Math.min(zr.width, zr.height) * 1.05;
+  }
+  var S=sizer(cv,ctx,readZone);
   var nameEl=document.getElementById('formName'), dotsEl=document.getElementById('dots');
+  var SPH_B=sphereSprite(token('--blue')||'#3d6ef7');
+  var SPH_W=sphereSprite(token('--warm')||'#e08a52');
+  var GLOW_W=glowSprite(token('--warm')||'#e08a52');
 
   function retarget(){
-    var f=FORMS[form], k;
-    for(k=0;k<N;k++){ var q=f.at(k,k/(N-1)); P[k].tx=q[0]; P[k].ty=q[1]; P[k].tz=q[2]; }
+    var f=FORMS[form], k, now=performance.now();
+    for(k=0;k<N;k++){
+      var q=f.at(k,k/(N-1));
+      P[k].tx=q[0]; P[k].ty=q[1]; P[k].tz=q[2];
+      /* The wave. Everything arriving at once reads as a video cut; a 30 to
+         80ms stagger per design motion rules, spread along the index, makes
+         the form assemble across half a second instead. */
+      P[k].wait = now + (k/N)*520;
+    }
     if(nameEl) nameEl.textContent=f.name;
     if(dotsEl) dotsEl.innerHTML = FORMS.map(function(g,n){
       return '<button class="dot'+(n===form?' on':'')+'" data-k="'+n+
@@ -103,27 +178,52 @@ function ventureScene(cv){
     var x=p.x*ca-p.z*sa, z0=p.x*sa+p.z*ca;
     var ct=Math.cos(st.tilt), stl=Math.sin(st.tilt);
     var y=p.y*ct-z0*stl, z=p.y*stl+z0*ct;
-    var tz=z+205, f=760/Math.max(tz,1);
-    return {X:S.w*0.68+x*f, Y:S.h*0.50+y*f, s:f, z:tz};
+    var tz=z+205, f=Z.focal/Math.max(tz,1);
+    return {X:Z.cx+x*f, Y:Z.cy+y*f, s:f, z:tz};
   }
   function draw(){
-    var cB=token('--blue')||'#3d6ef7', cW=token('--warm')||'#e08a52', a, b;
+    var cB=token('--blue')||'#3d6ef7', a, b;
     ctx.clearRect(0,0,S.w,S.h);
+
+    /* A contact shadow under the mass. Weight is what separates an object in
+       a room from a pattern on a wall, and it costs one gradient. Tinted
+       toward the ground's own blue black, never flat black. */
+    var gw=Z.focal*0.62, gy=Z.cy+Z.focal*0.42;
+    var g=ctx.createRadialGradient(Z.cx,gy,gw*0.06,Z.cx,gy,gw);
+    g.addColorStop(0,'rgba(9,13,26,0.55)');
+    g.addColorStop(1,'rgba(9,13,26,0)');
+    ctx.save(); ctx.translate(Z.cx,gy); ctx.scale(1,0.22); ctx.translate(-Z.cx,-gy);
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(Z.cx,gy,gw,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
     var pts=[]; for(a=0;a<N;a++) pts.push(proj(P[a]));
-    ctx.lineWidth=1; ctx.strokeStyle=cB;
+
+    /* Links faded and thinned by their own depth, so the lattice has a near
+       side and a far side instead of reading as a flat net. */
+    ctx.strokeStyle=cB;
     var L2=Math.pow(R*0.46,2);
     for(a=0;a<N;a++) for(b=a+1;b<N;b++){
       var dx=P[a].x-P[b].x, dy=P[a].y-P[b].y, dz=P[a].z-P[b].z, d2=dx*dx+dy*dy+dz*dz;
       if(d2>L2) continue;
-      ctx.globalAlpha=(1-d2/L2)*0.30*Math.min(1,pts[a].s*1.4);
+      var depth=Math.min(1,(pts[a].s+pts[b].s)*0.5*205/Z.focal*1.35);
+      ctx.globalAlpha=(1-d2/L2)*0.34*depth;
+      ctx.lineWidth=0.55+depth*0.75;
       ctx.beginPath(); ctx.moveTo(pts[a].X,pts[a].Y); ctx.lineTo(pts[b].X,pts[b].Y); ctx.stroke();
     }
+
     var ord=pts.map(function(p,ix){return {p:p,ix:ix};}).sort(function(m,n){return n.p.z-m.p.z;});
     for(a=0;a<ord.length;a++){
-      var o=ord[a];
-      ctx.globalAlpha=Math.max(0.18, Math.min(1, o.p.s*1.6));
-      ctx.fillStyle=(o.ix%17===0)?cW:cB;
-      ctx.beginPath(); ctx.arc(o.p.X,o.p.Y,Math.max(1.1,2.0*o.p.s),0,Math.PI*2); ctx.fill();
+      var o=ord[a], warm=(o.ix%17===0);
+      var r=Math.max(1.3, 2.1*o.p.s);
+      ctx.globalAlpha=Math.max(0.20, Math.min(1, o.p.s*205/Z.focal*1.6));
+      if(warm){
+        ctx.save(); ctx.globalCompositeOperation='lighter';
+        ctx.globalAlpha=Math.min(0.65, o.p.s*205/Z.focal*0.9);
+        ctx.drawImage(GLOW_W, o.p.X-r*4, o.p.Y-r*4, r*8, r*8);
+        ctx.restore();
+        ctx.globalAlpha=Math.max(0.25, Math.min(1, o.p.s*205/Z.focal*1.6));
+      }
+      ctx.drawImage(warm?SPH_W:SPH_B, o.p.X-r, o.p.Y-r, r*2, r*2);
     }
     ctx.globalAlpha=1;
   }
@@ -132,10 +232,13 @@ function ventureScene(cv){
     if(!last){ last=ts; tSwitch=ts; }
     var dt=Math.min(ts-last,50); last=ts;
     if(!pinned && ts-tSwitch>HOLD){ form=(form+1)%FORMS.length; retarget(); tSwitch=ts; }
-    var e=REDUCE?0.14:0.055;
+    var now=performance.now();
+    var e=REDUCE?0.14:0.062;
     for(var k=0;k<N;k++){ var p=P[k];
+      if(!REDUCE && now<p.wait) continue;
       p.x+=(p.tx-p.x)*e; p.y+=(p.ty-p.y)*e; p.z+=(p.tz-p.z)*e; }
     if(!REDUCE){ st.ang += dt*0.00006 + st.spin; st.spin*=0.94; }
+    readZone();
     draw(); requestAnimationFrame(frame);
   }
   var hint=document.getElementById('heroHint');
@@ -171,6 +274,36 @@ function landscapeScene(cv){
   for(a=0;a<=M;a++){ mesh[a]=[];
     for(b=0;b<=M;b++){ var x=-1+2*a/M, y=-1+2*b/M; mesh[a][b]={x:x,y:y,h:f(x,y)}; } }
 
+  /* The surface is filled, not wireframed. Each quad's colour carries three
+     signals at once: depth into the valley (toward blue), height on a ridge
+     (toward ice), and proximity to the one global minimum (toward warm), so
+     the answer the walkers are missing is visibly warm before any walker
+     finds it. Shading is precomputed because the terrain never changes; only
+     the projection does. */
+  var C_INK, C_BLUE, C_ICE, C_WARM;
+  var quads=[];
+  function shade(){
+    C_INK  = token('--ink') ||'#0a0d15';
+    C_BLUE = token('--blue')||'#3d6ef7';
+    C_ICE  = token('--ice') ||'#8fb4ff';
+    C_WARM = token('--warm')||'#e08a52';
+    quads=[];
+    var bw=WELLS[0];
+    for(var i=0;i<M;i++) for(var j=0;j<M;j++){
+      var h=(mesh[i][j].h+mesh[i+1][j].h+mesh[i][j+1].h+mesh[i+1][j+1].h)/4;
+      var cx=(mesh[i][j].x+mesh[i+1][j+1].x)/2, cy=(mesh[i][j].y+mesh[i+1][j+1].y)/2;
+      var depth=Math.max(0,-h);                    // 0 flat .. ~1 deepest
+      var ridge=Math.max(0,h)*1.6;
+      var dx=cx-bw.x, dy=cy-bw.y;
+      var best=Math.exp(-(dx*dx+dy*dy)/0.05);      // near the true answer
+      var col=mix(C_INK, C_BLUE, 0.10+depth*0.72);
+      if(ridge>0.02) col=mix(col, C_ICE, Math.min(0.30,ridge));
+      if(best>0.05)  col=mix(col, C_WARM, best*0.55*depth);
+      quads.push({i:i, j:j, fill:col, line:mix(col,C_ICE,0.16)});
+    }
+  }
+  shade();
+
   var walkers=[], settled=0, found=0;
   var elW=document.getElementById('sW'), elS=document.getElementById('sS'), elB=document.getElementById('sB');
   function report(){
@@ -182,13 +315,15 @@ function landscapeScene(cv){
     walkers=[]; settled=0; found=0;
     for(var i=0;i<26;i++) walkers.push({
       x:(Math.random()*2-1)*0.92, y:(Math.random()*2-1)*0.92,
-      T:0.42, done:false, good:false });
+      T:0.42, done:false, good:false, hist:[] });
     report();
   }
   function step(){
     for(var i=0;i<walkers.length;i++){
       var w=walkers[i]; if(w.done) continue;
       var g=grad(w.x,w.y);
+      w.hist.push(w.x, w.y);
+      if(w.hist.length>28) w.hist.splice(0, w.hist.length-28);
       w.x -= g[0]*0.030 + (Math.random()-0.5)*w.T*0.06;
       w.y -= g[1]*0.030 + (Math.random()-0.5)*w.T*0.06;
       w.x = Math.max(-1, Math.min(1, w.x));
@@ -205,6 +340,7 @@ function landscapeScene(cv){
 
   var st={ang:-0.72, tilt:0.62, spin:0}, SC=86;
   var S=sizer(cv,ctx);
+  var pulse=0;
   function proj(x,h,y){
     var px=x*SC, pz=y*SC, py=-h*SC*0.92;
     var ca=Math.cos(st.ang), sa=Math.sin(st.ang);
@@ -215,25 +351,70 @@ function landscapeScene(cv){
     return {X:S.w*0.5+rx*q, Y:S.h*0.54+ry*q, s:q, z:tz};
   }
   function draw(){
-    var cB=token('--blue')||'#3d6ef7', cW=token('--warm')||'#e08a52', i, j;
     ctx.clearRect(0,0,S.w,S.h);
-    var g=[];
+    var i, j, g=[];
     for(i=0;i<=M;i++){ g[i]=[];
       for(j=0;j<=M;j++) g[i][j]=proj(mesh[i][j].x, mesh[i][j].h, mesh[i][j].y); }
-    ctx.strokeStyle=cB; ctx.lineWidth=1;
-    for(i=0;i<=M;i++) for(j=0;j<M;j++){
-      ctx.globalAlpha=Math.min(0.5, 0.06 + Math.max(0,-mesh[i][j].h)*0.30);
-      ctx.beginPath(); ctx.moveTo(g[i][j].X,g[i][j].Y); ctx.lineTo(g[i][j+1].X,g[i][j+1].Y); ctx.stroke();
-      if(i<M){ ctx.beginPath(); ctx.moveTo(g[i][j].X,g[i][j].Y); ctx.lineTo(g[i+1][j].X,g[i+1][j].Y); ctx.stroke(); }
+
+    /* Painter's order: quads sorted far to near every frame, because the
+       viewer can drag the terrain to any angle. */
+    for(i=0;i<quads.length;i++){
+      var q=quads[i];
+      q.z=(g[q.i][q.j].z+g[q.i+1][q.j].z+g[q.i][q.j+1].z+g[q.i+1][q.j+1].z)/4;
+    }
+    quads.sort(function(m,n){ return n.z-m.z; });
+    var strokeToo = S.w>=640;
+    for(i=0;i<quads.length;i++){
+      var q2=quads[i];
+      var p00=g[q2.i][q2.j], p10=g[q2.i+1][q2.j], p11=g[q2.i+1][q2.j+1], p01=g[q2.i][q2.j+1];
+      var depth=Math.max(0.35, Math.min(1,(340-q2.z)/170));
+      ctx.globalAlpha=0.92*depth;
+      ctx.fillStyle=q2.fill;
+      ctx.beginPath();
+      ctx.moveTo(p00.X,p00.Y); ctx.lineTo(p10.X,p10.Y);
+      ctx.lineTo(p11.X,p11.Y); ctx.lineTo(p01.X,p01.Y);
+      ctx.closePath(); ctx.fill();
+      if(strokeToo){
+        ctx.globalAlpha=0.5*depth;
+        ctx.strokeStyle=q2.line; ctx.lineWidth=0.5; ctx.stroke();
+      }
     }
     ctx.globalAlpha=1;
+
+    /* The true answer, marked before anyone finds it: a pulsing ring over
+       the deepest well. A ring with spread and no blur, the same grammar as
+       a focus ring, not a glow. */
+    var bw=WELLS[0], bp=proj(bw.x, f(bw.x,bw.y), bw.y);
+    ctx.strokeStyle=C_WARM;
+    ctx.globalAlpha=0.55+Math.sin(pulse)*0.25;
+    ctx.lineWidth=1.5;
+    var rr=7+Math.sin(pulse)*2;
+    ctx.beginPath(); ctx.arc(bp.X,bp.Y,rr*bp.s*0.45+5,0,Math.PI*2); ctx.stroke();
+    ctx.globalAlpha=1;
+
+    /* Trails first, then walkers, so every search path reads as a path. */
     for(i=0;i<walkers.length;i++){
-      var w=walkers[i], p=proj(w.x, f(w.x,w.y), w.y), hot=w.done && w.good;
-      ctx.fillStyle=hot?cW:cB;
-      ctx.globalAlpha=w.done?(hot?1:0.5):0.95;
-      if(hot){ ctx.shadowColor=cW; ctx.shadowBlur=12; }
-      ctx.beginPath(); ctx.arc(p.X,p.Y,hot?4.2:3,0,Math.PI*2); ctx.fill();
-      ctx.shadowBlur=0;
+      var w=walkers[i];
+      if(w.hist.length>=4){
+        ctx.strokeStyle=w.good?C_WARM:C_ICE;
+        ctx.lineWidth=1;
+        for(var k=2;k<w.hist.length;k+=2){
+          var pa=proj(w.hist[k-2], f(w.hist[k-2],w.hist[k-1]), w.hist[k-1]);
+          var pb=proj(w.hist[k],   f(w.hist[k],  w.hist[k+1]), w.hist[k+1]);
+          ctx.globalAlpha=(k/w.hist.length)*0.34;
+          ctx.beginPath(); ctx.moveTo(pa.X,pa.Y); ctx.lineTo(pb.X,pb.Y); ctx.stroke();
+        }
+      }
+    }
+    for(i=0;i<walkers.length;i++){
+      var w2=walkers[i], p=proj(w2.x, f(w2.x,w2.y), w2.y), hot=w2.done && w2.good;
+      ctx.globalAlpha=w2.done?(hot?1:0.55):0.95;
+      ctx.fillStyle=hot?C_WARM:C_ICE;
+      ctx.beginPath(); ctx.arc(p.X,p.Y,hot?4.2:2.8,0,Math.PI*2); ctx.fill();
+      if(hot){
+        ctx.strokeStyle=C_WARM; ctx.globalAlpha=0.35;
+        ctx.beginPath(); ctx.arc(p.X,p.Y,7.5,0,Math.PI*2); ctx.stroke();
+      }
     }
     ctx.globalAlpha=1;
   }
@@ -242,6 +423,7 @@ function landscapeScene(cv){
     if(!last) last=ts;
     var dt=Math.min(ts-last,50); last=ts;
     acc+=dt; if(acc>16){ step(); acc=0; }
+    pulse+=dt*0.004;
     if(!REDUCE){ st.ang += dt*0.00004 + st.spin; st.spin*=0.94; }
     draw(); requestAnimationFrame(frame);
   }

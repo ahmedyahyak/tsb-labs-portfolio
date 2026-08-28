@@ -255,8 +255,10 @@ section:first-of-type{border-top:none}
 @media(max-width:860px){.g3{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
 .cell{background:var(--void);padding:28px 26px 30px;display:flex;
+  transition:background .22s var(--ease-out);
   flex-direction:column;gap:9px}
 section.raise .cell{background:var(--ink)}
+.cell:hover{background:var(--raise)}
 /* These two are div eyebrows, not chips. Every one of them is a short label
    sitting directly above the heading it introduces: "Pillar 01" over "Quantum
    optimisation", "Research" over "Deep Tech Research". They take the ornament
@@ -300,7 +302,7 @@ section.raise .honest{background:var(--void)}
 .honest p + p{margin-top:12px}
 
 /* ── 3D scenes ─────────────────────────────────────────────────────────── */
-.scene{touch-action:none;cursor:grab;width:100%;height:100%}
+.scene{touch-action:pan-y;cursor:grab;width:100%;height:100%}
 .scene.drag{cursor:grabbing}
 /* "Drag to rotate" is the only thing telling anyone the hero is interactive.
    That is an instruction, not decoration. */
@@ -315,12 +317,56 @@ section.raise .honest{background:var(--void)}
 .stage::after{content:"";position:absolute;inset:0;pointer-events:none;
   background:radial-gradient(112% 84% at 76% 48%,transparent 24%,var(--void) 86%)}
 .stage .wrap{position:relative;z-index:2}
-.stage .wrap > *{max-width:min(100%,585px)}
 .stage h1 + .lede{margin-top:22px}
+/* pointer-events off on the grid, back on for the copy: the canvas sits
+   underneath, and this is what lets a drag that starts over the scene cell
+   reach it while every link in the copy still clicks. */
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(300px,.98fr);
+  gap:clamp(28px,5vw,64px);align-items:center;pointer-events:none}
+.stage-copy{pointer-events:auto;max-width:600px}
+.stage-copy .cta-row{margin-top:30px}
+.stage-copy .now{margin-top:34px}
+.stage-zone{min-height:clamp(380px,58vh,560px)}
 @media(max-width:900px){
-  .stage::after{background:linear-gradient(180deg,color-mix(in srgb,var(--void) 55%,transparent),var(--void) 90%)}
-  .stage .wrap > *{max-width:100%}
+  .stage{min-height:0;padding:clamp(40px,7vw,72px) 0 0}
+  .stage-grid{grid-template-columns:1fr;gap:8px}
+  .stage-zone{min-height:340px}
+  .stage::after{background:linear-gradient(180deg,transparent 55%,var(--void) 96%)}
 }
+
+/* ── the measured strip under the hero ──────────────────────────────────
+   Four figures, each one verifiable today, set in the display face. This is
+   the page's one loud data moment; everything after it can stay quiet. */
+.statband{border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  background:var(--ink)}
+.sb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  background:var(--line);border-left:1px solid var(--line);border-right:1px solid var(--line)}
+.sb{background:var(--ink);padding:28px 26px 30px}
+.sb .v{font-family:var(--display);font-weight:800;letter-spacing:-.02em;
+  font-size:clamp(32px,3.8vw,46px);color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.sb .v em{font-style:normal;color:var(--blue-label);font-size:.55em;font-weight:700}
+.sb .k{margin-top:9px;font-family:var(--mono);font-size:var(--lbl);color:var(--faint);
+  letter-spacing:.04em;line-height:1.65}
+@media(max-width:860px){.sb-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* capability grid, deliberately uneven: two wide cards frame two narrow ones
+   so the row has a reading order instead of four equal weights */
+.gcap{grid-template-columns:repeat(3,1fr)}
+.gcap .wide{grid-column:span 2}
+@media(max-width:860px){.gcap{grid-template-columns:repeat(2,1fr)}.gcap .wide{grid-column:span 2}}
+@media(max-width:640px){.gcap{grid-template-columns:1fr}.gcap .wide{grid-column:auto}}
+
+/* the close. One band, one message, both actions clickable at the exact
+   moment a reader who scrolled everything decides. */
+.ctaband{border-top:1px solid var(--line);
+  background:linear-gradient(180deg,var(--ink),var(--void) 88%);
+  text-align:center;padding:calc(var(--sec)*1.02) var(--gut)}
+.ctaband h2{max-width:22ch;margin:0 auto}
+.ctaband .lede{margin:18px auto 0;max-width:54ch}
+.ctaband .cta-row{justify-content:center;margin-top:32px}
+.ctaband .mail{margin-top:26px;font-family:var(--mono);font-size:var(--lbl);
+  letter-spacing:.06em;color:var(--faint)}
+.ctaband .mail a{color:var(--ice)}
 
 .panel{display:grid;grid-template-columns:1.3fr .95fr;border:1px solid var(--line);
   background:var(--void);margin-top:1px;min-height:430px;position:relative}
