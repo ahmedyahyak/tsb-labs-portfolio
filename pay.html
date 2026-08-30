@@ -12,13 +12,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 
 <header class="nav" id="nav">
   <div class="wrap navin">
     <a class="brand" href="/"><span class="mark">TSB</span><span class="bt">TSB LABS</span><span class="bs">SYSTEMS FOR THE AI ERA</span></a>
-    <nav class="navlinks">
+    <nav class="navlinks" aria-label="Primary">
       <a href="/services.html">Services</a>
       <a href="/portfolio.html">Portfolio</a>
       <a href="/products.html">Products</a>
@@ -26,6 +27,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html">Research</a>
+        <a href="/case-studies.html">Case studies</a>
+        <a href="/work-with-us.html">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>
@@ -40,7 +52,7 @@
 
 <main class="wrap">
 
-  <h2 id="request">02 / Request details and an invoice</h2>
+  <h2 id="request">Request details and an invoice</h2>
   <div class="panel">
     <h3>We send the details, we do not publish them</h3>
     <p>Bank transfer is available for any amount and is usually the cheapest route for larger invoices. We do not publish our account details on a public page, because published details get scraped and reused in invoice fraud against the people who trust us.</p>
@@ -52,7 +64,7 @@
     <p class="note" id="hint">Opens your email client with the message prepared. Nothing is submitted to this page and nothing is stored here.</p>
   </div>
 
-  <h2>03 / Before you pay</h2>
+  <h2>Before you pay</h2>
   <div class="panel">
     <ul>
       <li><strong>Check the reference.</strong> Every TSB Labs invoice carries a code in the form TSB-INV-YYYY-NNN. If a payment request reaches you without one, or the account details differ from what we sent you directly, stop and call before paying.</li>

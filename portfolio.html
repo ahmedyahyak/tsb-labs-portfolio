@@ -31,13 +31,14 @@
 </script>
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" id="nav">
   <div class="wrap navin">
     <a class="brand" href="/"><span class="mark">TSB</span><span class="bt">TSB LABS</span><span class="bs">SYSTEMS FOR THE AI ERA</span></a>
-    <nav class="navlinks">
+    <nav class="navlinks" aria-label="Primary">
       <a href="/services.html">Services</a>
       <a href="/portfolio.html" aria-current="page">Portfolio</a>
       <a href="/products.html">Products</a>
@@ -45,6 +46,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/portfolio.html" aria-current="page">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html">Research</a>
+        <a href="/case-studies.html">Case studies</a>
+        <a href="/work-with-us.html">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>
@@ -57,7 +69,7 @@
 <section id="work">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="kicker">01 / Selected work</div>
+      <div class="kicker">Selected work</div>
       <p class="sec-note">Some engagements are under confidentiality, so we describe the work rather than name the client. References are available privately on request. For three of these written up in full, with the measurements behind them, read the <a href="/case-studies.html">case studies</a>.</p>
     </div>
 
@@ -125,7 +137,7 @@
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener" style="padding:13px 22px">Book a discovery call</a>
-        <a class="navcta" href="/case-studies.html" style="padding:13px 22px;background:transparent;border:1px solid rgba(255,255,255,.18);color:inherit">Read the case studies</a>
+        <a class="btn-ghost" href="/case-studies.html">Read the case studies</a>
       </div>
     </div>
   </section>

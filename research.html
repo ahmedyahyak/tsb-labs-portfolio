@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
 <script defer src="/assets/scenes.js"></script>
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -30,6 +31,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html" aria-current="page">Research</a>
+        <a href="/case-studies.html">Case studies</a>
+        <a href="/work-with-us.html">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="/book.html">Book a call</a>
   </div>
 </header>
@@ -73,9 +85,9 @@
               that is not the deepest one.</strong></p>
           </div>
           <div class="stats">
-            <div class="stat"><div class="k">Searches</div><div class="v" id="sW">0</div></div>
-            <div class="stat"><div class="k">Settled</div><div class="v" id="sS">0</div></div>
-            <div class="stat"><div class="k">Found best</div><div class="v hot" id="sB">0</div></div>
+            <div class="stat"><div class="k">Searches</div><div class="v" id="sW">...</div></div>
+            <div class="stat"><div class="k">Settled</div><div class="v" id="sS">...</div></div>
+            <div class="stat"><div class="k">Found best</div><div class="v hot" id="sB">...</div></div>
           </div>
           <button class="btn" id="reseed" type="button">Run it again</button>
         </div>

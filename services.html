@@ -31,13 +31,14 @@
 </script>
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" id="nav">
   <div class="wrap navin">
     <a class="brand" href="/"><span class="mark">TSB</span><span class="bt">TSB LABS</span><span class="bs">SYSTEMS FOR THE AI ERA</span></a>
-    <nav class="navlinks">
+    <nav class="navlinks" aria-label="Primary">
       <a href="/services.html" aria-current="page">Services</a>
       <a href="/portfolio.html">Portfolio</a>
       <a href="/products.html">Products</a>
@@ -45,6 +46,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html" aria-current="page">Services</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html">Research</a>
+        <a href="/case-studies.html">Case studies</a>
+        <a href="/work-with-us.html">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>
@@ -57,7 +69,6 @@
 <section id="services">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="kicker">02 / What we build</div>
       <h2>What each one actually covers.</h2>
     </div>
     <div class="svc-grid">
@@ -95,28 +106,28 @@
           <div class="n">01 · PLATFORMS AND APPS</div>
           <h3>The software your business runs on</h3>
           <p>Customer facing apps, field and operations tools, admin consoles, and the billing underneath them. We have built a universal gym membership platform with a member app, a check in portal, an admin console and billing, and a bilingual English and Arabic manufacturing site end to end.</p>
-          <p style="margin-top:12px;opacity:.55;font-size:13px">Typically: web app, mobile app, admin console, payments, reporting.</p>
+          <p class="typical">Typically: web app, mobile app, admin console, payments, reporting.</p>
         </div>
 
         <div class="tile">
           <div class="n">02 · AI SYSTEMS</div>
           <h3>AI that does work, not demos</h3>
           <p>Assistants and agents wired into real operations with a human approval gate on anything irreversible. Madar OS is our own: a memory graph of the business, specialist departments, and a permission ring that stops every send, post and payment until a person says yes. We run our own companies on it daily.</p>
-          <p style="margin-top:12px;opacity:.55;font-size:13px">Typically: context encoding, connector wiring, approval design, evaluation before trust.</p>
+          <p class="typical">Typically: context encoding, connector wiring, approval design, evaluation before trust.</p>
         </div>
 
         <div class="tile">
           <div class="n">03 · SECURE FOUNDATIONS</div>
           <h3>Boring infrastructure, deliberately</h3>
           <p>Encrypted data rooms, access control, audit logs, backups that have been restored rather than merely scheduled. A backup nobody has restored is a hope, not a backup, so we prove it before we call it done.</p>
-          <p style="margin-top:12px;opacity:.55;font-size:13px">Typically: access model, audit trail, backup and restore drill, disaster recovery plan.</p>
+          <p class="typical">Typically: access model, audit trail, backup and restore drill, disaster recovery plan.</p>
         </div>
 
         <div class="tile">
           <div class="n">04 · TECHNOLOGY LEADERSHIP</div>
           <h3>A builder in the room</h3>
           <p>Architecture decisions, vendor selection, security programmes, and running engineering when you need someone accountable rather than another agency. We act as technology advisor and build lead to a platform business in Oman, leading development across mobile apps, an operations console and secure infrastructure.</p>
-          <p style="margin-top:12px;opacity:.55;font-size:13px">Typically: monthly advisory, architecture review, vendor and hiring decisions, escalation cover.</p>
+          <p class="typical">Typically: monthly advisory, architecture review, vendor and hiring decisions, escalation cover.</p>
         </div>
       </div>
     </div>
@@ -144,7 +155,7 @@
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap">
         <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener" style="padding:13px 22px">Book a discovery call</a>
-        <a class="navcta" href="/portfolio.html" style="padding:13px 22px;background:transparent;border:1px solid rgba(255,255,255,.18);color:inherit">See the work</a>
+        <a class="btn-ghost" href="/portfolio.html">See the work</a>
       </div>
     </div>
   </section>

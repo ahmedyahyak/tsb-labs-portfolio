@@ -31,13 +31,14 @@
 </script>
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
 <header class="nav" id="nav">
   <div class="wrap navin">
     <a class="brand" href="/"><span class="mark">TSB</span><span class="bt">TSB LABS</span><span class="bs">SYSTEMS FOR THE AI ERA</span></a>
-    <nav class="navlinks">
+    <nav class="navlinks" aria-label="Primary">
       <a href="/services.html">Services</a>
       <a href="/portfolio.html">Portfolio</a>
       <a href="/products.html">Products</a>
@@ -45,6 +46,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html" aria-current="page">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html">Research</a>
+        <a href="/case-studies.html">Case studies</a>
+        <a href="/work-with-us.html" aria-current="page">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>
@@ -57,7 +69,6 @@
 <section id="method">
   <div class="wrap">
     <div class="sec-head reveal">
-      <div class="kicker">03 / How we work</div>
       <h2>Four things we commit to in writing.</h2>
       <p class="sec-note">Every engagement runs on these four terms. They are in the agreement, not just on this page.</p>
     </div>
@@ -96,7 +107,7 @@
     <div class="founder reveal">
       <div class="founder-tile">AK</div>
       <div>
-        <div class="role">04 / Founder</div>
+        <div class="role">Founder</div>
         <h2>Ahmed Yahya Al Kindi</h2>
         <p style="margin-top:14px">Ahmed is a systems builder. Author of The System Builder, named a Top 20 GCC entrepreneur in 2019, and a public speaker since 2017. He is also cofounder of AI Founder Hub in Dubai and cofounder of <a href="https://www.devmatesolutions.com" target="_blank" rel="noopener">Devmate Solutions</a>, a software agency with more than 40 brands delivered. TSB Labs is his own practice: the room where he does the work himself.</p>
         <div class="link-line"><a href="https://www.ahmedyahyak.com" target="_blank" rel="noopener">ahmedyahyak.com &nearr;</a></div>
@@ -105,7 +116,6 @@
   </div>
 </section><section class="contact" id="contact">
   <div class="wrap reveal">
-    <div class="kicker">05 / Start a conversation</div>
     <h2>We take on a small number of builds each year.</h2>
     <p>If you are building something that has to work, and keep working, talk to us. Book a 20 minute discovery call with Ahmed. Client references are available privately on request.</p>
     <div class="cta-row" style="justify-content:center">

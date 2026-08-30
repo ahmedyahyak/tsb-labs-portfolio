@@ -14,6 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
+<script defer src="/assets/nav.js"></script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -21,7 +22,7 @@
 <header class="nav" id="nav">
   <div class="wrap navin">
     <a class="brand" href="/"><span class="mark">TSB</span><span class="bt">TSB LABS</span><span class="bs">SYSTEMS FOR THE AI ERA</span></a>
-    <nav class="navlinks">
+    <nav class="navlinks" aria-label="Primary">
       <a href="/services.html">Services</a>
       <a href="/portfolio.html">Portfolio</a>
       <a href="/products.html">Products</a>
@@ -29,6 +30,17 @@
       <a href="/case-studies.html">Case studies</a>
       <a href="/work-with-us.html">How we work</a>
     </nav>
+    <details class="mnav" id="mnav">
+      <summary aria-label="Navigation menu"><span class="mo">Menu</span><span class="mc">Close</span></summary>
+      <nav aria-label="Primary">
+        <a href="/services.html">Services</a>
+        <a href="/portfolio.html">Portfolio</a>
+        <a href="/products.html">Products</a>
+        <a href="/research.html">Research</a>
+        <a href="/case-studies.html" aria-current="page">Case studies</a>
+        <a href="/work-with-us.html">How we work</a>
+      </nav>
+    </details>
     <a class="navcta" href="https://calendly.com/ahmedyahyak/20mins" target="_blank" rel="noopener">Book a call</a>
   </div>
 </header>

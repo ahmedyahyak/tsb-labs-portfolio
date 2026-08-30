@@ -117,12 +117,35 @@ body{background:var(--void);color:var(--text);font-family:var(--sans);
   font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased;
   overflow-x:hidden}
 img,svg,canvas{display:block;max-width:100%}
-::selection{background:rgba(61,110,247,.28)}
+/* Both halves stated. Setting only the background hands the text colour to
+   the browser, and the browser's choice is not on this palette. */
+::selection{background:rgba(61,110,247,.30);color:var(--on-blue)}
 input,textarea,select{caret-color:var(--blue)}
 :focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:2px}
+
+/* The scrollbar is the one surface every visitor sees on every page, and it
+   was rendering the OS default: light grey against #05070d on Windows and
+   Linux Chrome. Thin, blue-biased neutrals, void track, same as the rest of
+   the chrome. */
+html{scrollbar-color:var(--line-lit) var(--void);scrollbar-width:thin}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:var(--void)}
+::-webkit-scrollbar-thumb{background:var(--line-lit);border:3px solid var(--void);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:var(--blue-deep)}
+
+/* Reduced motion strips the spatial part and keeps the informative part.
+   The old rule here zeroed every transition on the site, which also killed
+   the colour and opacity changes that tell a keyboard or hover user their
+   input registered. Transform work stops; acknowledgement stays. */
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
-  *,*::before,*::after{animation-duration:.01ms !important;transition-duration:.01ms !important}
+  *,*::before,*::after{
+    transition-property:color,background-color,border-color,
+      text-decoration-color,opacity,outline-color,box-shadow !important;
+    transition-duration:.16s !important;
+    animation:none !important}
+  .btn-primary:active,.btn-ghost:active,.ghost:active,.cta:active,
+  .btn:active,.navcta:active{transform:none}
 }
 
 .wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
@@ -146,6 +169,15 @@ strong,b{color:var(--text);font-weight:600}
 
 .kick{font-family:var(--mono);font-size:var(--orn);letter-spacing:.2em;
   text-transform:uppercase;color:var(--blue-label);font-weight:700;margin-bottom:16px}
+/* Bricolage ships no italic file, so an <em> in a headline was being
+   synthesised: the browser shears the upright glyphs, and at 67px the shear
+   is visible. Emphasis in a headline is colour on this site, not slant. */
+h1 em,h2 em{font-style:normal;color:var(--ice)}
+/* The "Typically:" lines on the service cards are the only place the page
+   says what is inside each service. They were inline-styled to 55% opacity,
+   which measured 2.74:1. --faint was lifted to clear 4.5:1 for exactly this
+   kind of line; it gets used. */
+.typical{margin-top:12px;font-size:13px;color:var(--faint);line-height:1.6}
 .lede{font-size:clamp(1.02rem,1.5vw,1.18rem);line-height:1.6;max-width:52ch;color:var(--mute)}
 .prose{max-width:64ch}
 .prose p + p{margin-top:15px}
@@ -229,6 +261,12 @@ a:visited{color:inherit}
    wordmark above it is 16px and bolder, which carries the hierarchy. */
 .bs{display:block;font-family:var(--mono);font-size:12px;letter-spacing:.11em;
   text-transform:uppercase;color:var(--faint);margin-top:2px}
+.bt{white-space:nowrap}
+/* Below 640 the bar holds three controls and the tagline was wrapping to
+   three lines and spilling past the 66px bar. The wordmark carries the
+   brand on a phone; the positioning line returns at the first width where
+   it fits on one line. */
+@media(max-width:640px){.bs{display:none}}
 .navlinks{display:flex;gap:26px}
 .navlinks a{font-size:13.5px;color:var(--mute);text-decoration:none;transition:color .15s}
 .navlinks a:hover,.navlinks a[aria-current="page"]{color:var(--text)}
@@ -237,7 +275,42 @@ a:visited{color:inherit}
   border:1px solid var(--blue);padding:10px 16px;text-decoration:none;
   transition:background .16s,color .16s;white-space:nowrap}
 .navcta:hover{background:var(--blue-fill);color:var(--on-blue)}
-@media(max-width:880px){.navlinks{display:none}}
+
+/* ── mobile navigation ───────────────────────────────────────────────────
+   Below 880px the primary links used to be display:none with nothing in
+   their place, which left six of nine pages unreachable from a phone unless
+   a body link happened to point there. A details disclosure carries them
+   now: the browser ships the open and close state machine, so the menu
+   works with scripting off, and nav.js only adds Escape and a soft close.
+
+   The control is the word "Menu", not a hamburger. This site has no icon
+   set, and a word needs no explanation. */
+.mnav{display:none}
+.mnav summary{list-style:none;cursor:pointer;display:grid;place-items:center;
+  min-width:44px;min-height:44px;padding:0 12px;font-family:var(--mono);
+  font-size:var(--lbl);letter-spacing:.13em;text-transform:uppercase;
+  font-weight:700;color:var(--text);border:1px solid var(--line-lit);
+  transition:border-color .16s var(--ease-out)}
+.mnav summary::-webkit-details-marker{display:none}
+.mnav summary:hover{border-color:var(--blue)}
+.mnav .mc{display:none}
+.mnav[open] .mo{display:none}
+.mnav[open] .mc{display:inline}
+/* The panel positions against the sticky header itself, so it hangs from
+   the bar edge to edge and never drifts from the control that opened it. */
+.mnav nav{position:absolute;left:0;right:0;top:66px;display:flex;
+  flex-direction:column;background:var(--ink);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  animation:mnav-in .22s var(--ease-out)}
+.mnav nav a{padding:14px var(--gut);font-size:15px;color:var(--text);
+  text-decoration:none}
+.mnav nav a + a{border-top:1px solid var(--line)}
+/* an indicator, not a card stripe: inset, and only on the current page */
+.mnav nav a[aria-current="page"]{box-shadow:inset 2px 0 0 var(--blue);
+  color:var(--ice)}
+@keyframes mnav-in{from{opacity:0;transform:translateY(-6px)}}
+@keyframes mnav-out{to{opacity:0;transform:translateY(-6px)}}
+@media(max-width:880px){.navlinks{display:none}.mnav{display:block}}
 
 /* ── sections ──────────────────────────────────────────────────────────── */
 section{padding:var(--sec) 0;border-top:1px solid var(--line)}
@@ -292,9 +365,14 @@ section.raise .stat{background:var(--ink)}
 .stat .v.hot{color:var(--warm)}
 .stat .v small{font-size:.7rem;font-weight:400;color:var(--faint);margin-left:3px}
 
-/* ── the honesty block, a recurring device across the site ─────────────── */
-.honest{border:1px solid var(--line);border-left:2px solid var(--warm);
-  background:var(--ink);padding:26px 28px;margin-top:34px;max-width:72ch}
+/* ── the honesty block, a recurring device across the site ───────────────
+   A rule above the block, not a stripe beside it. The coloured edge stripe
+   on a card is the single most recognisable template tell there is, and
+   this device is too good to wear one: the warm stays, moved to the top
+   edge in a fade, which is the vocabulary of a technical document. The
+   warm mono label inside is where the accent actually lives. */
+.honest{border:none;border-top:1px solid color-mix(in srgb,var(--warm) 46%,transparent);
+  background:var(--ink);padding:24px 28px 26px;margin-top:34px;max-width:72ch}
 section.raise .honest{background:var(--void)}
 .honest .k{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.15em;
   text-transform:uppercase;color:var(--warm);font-weight:700}
@@ -321,7 +399,10 @@ section.raise .honest{background:var(--void)}
 /* pointer-events off on the grid, back on for the copy: the canvas sits
    underneath, and this is what lets a drag that starts over the scene cell
    reach it while every link in the copy still clicks. */
-.stage-grid{display:grid;grid-template-columns:minmax(0,1.02fr) minmax(300px,.98fr);
+/* The copy owns the stage. At 50/50 the canvas, which moves and re-labels
+   itself, wins a fight the h1 should never be in: motion beats size. Two
+   thirds to the words, and the scene becomes the counterweight. */
+.stage-grid{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(280px,.68fr);
   gap:clamp(28px,5vw,64px);align-items:center;pointer-events:none}
 .stage-copy{pointer-events:auto;max-width:600px}
 .stage-copy .cta-row{margin-top:30px}
@@ -342,9 +423,14 @@ section.raise .honest{background:var(--void)}
 .sb-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
   background:var(--line);border-left:1px solid var(--line);border-right:1px solid var(--line)}
 .sb{background:var(--ink);padding:28px 26px 30px}
-.sb .v{font-family:var(--display);font-weight:800;letter-spacing:-.02em;
-  font-size:clamp(32px,3.8vw,46px);color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
-.sb .v em{font-style:normal;color:var(--blue-label);font-size:.55em;font-weight:700}
+/* Mono, and two steps down from where these sat. At 46px in the display
+   face at 800, four of them in a row read as four more headlines, and the
+   h1 directly above is 67px in the same face: a 1.46:1 ratio, which is a
+   fight. In the mono at 34px the figures read as instrumentation, the h1
+   ratio opens to 1.98:1, and the strip goes back to being evidence. */
+.sb .v{font-family:var(--mono);font-weight:700;letter-spacing:-.01em;
+  font-size:clamp(26px,2.4vw,34px);color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
+.sb .v em{font-style:normal;color:var(--blue-label);font-size:.6em;font-weight:700}
 .sb .k{margin-top:9px;font-family:var(--mono);font-size:var(--lbl);color:var(--faint);
   letter-spacing:.04em;line-height:1.65}
 @media(max-width:860px){.sb-grid{grid-template-columns:repeat(2,1fr)}}
@@ -383,18 +469,27 @@ section.raise .panel{background:var(--ink)}
   cursor:pointer;transition:background .16s,color .16s}
 .btn:hover{background:var(--blue-fill);color:var(--on-blue)}
 
-/* the assembling readout under the hero headline */
-.now{display:flex;align-items:center;gap:14px;border-left:2px solid var(--warm);
-  padding:10px 0 10px 16px;margin-top:34px}
+/* The assembling readout under the hero headline. No stripe and no warm:
+   it sits under the two CTAs, and as the only warm pixel in the first
+   viewport it was pulling the eye off the buttons that are the point of
+   the hero. It is a readout, so it dresses like one: quiet. */
+.now{display:flex;align-items:center;gap:14px;padding:10px 0;margin-top:34px;
+  border-top:1px solid var(--line)}
 .now .k{font-family:var(--mono);font-size:var(--orn);letter-spacing:.17em;
   text-transform:uppercase;color:var(--faint);font-weight:700;white-space:nowrap}
 .now .v{font-family:var(--display);font-weight:700;font-size:1.08rem;
-  letter-spacing:-.015em;color:var(--text)}
+  letter-spacing:-.015em;color:var(--mute)}
 .dots{display:flex;gap:6px;margin-left:auto}
+/* 6px stays the visual; the target is the ::after. A 6x6 button is a fifth
+   of the minimum a finger needs. */
 .dot{width:6px;height:6px;border-radius:50%;background:var(--line-lit);
-  cursor:pointer;border:none;padding:0;transition:transform .18s,background .18s}
-.dot.on{background:var(--warm)}
-.dot:hover{transform:scale(1.5)}
+  cursor:pointer;border:none;padding:0;position:relative;
+  transition:transform .18s var(--ease-out),background .18s var(--ease-out)}
+.dot::after{content:"";position:absolute;left:50%;top:50%;width:24px;height:24px;
+  transform:translate(-50%,-50%)}
+.dot.on{background:var(--blue-label)}
+/* a size change alone on a 6px object is invisible; the colour moves too */
+.dot:hover{transform:scale(1.4);background:var(--ice)}
 
 /* ── numbered sequence, used only where order is real ──────────────────── */
 .steps{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:36px}
@@ -565,9 +660,11 @@ section.raise .tile,section.raise .card,section.raise .step{background:var(--ink
 .status.live,.s-live,.live{color:var(--warm);border-color:var(--warm)}
 .nda{color:var(--faint)}
 
-/* notes */
-.note,.founder,.method-note{border:1px solid var(--line);border-left:2px solid var(--warm);
-  background:var(--ink);padding:24px 26px;margin-top:30px;max-width:72ch}
+/* notes. Same treatment as .honest, same reasoning: the top rule carries
+   the signal the side stripe used to, without the template smell. */
+.note,.founder,.method-note{border:none;
+  border-top:1px solid color-mix(in srgb,var(--warm) 46%,transparent);
+  background:var(--ink);padding:24px 26px 26px;margin-top:30px;max-width:72ch}
 .note p,.founder p,.method-note p{color:var(--mute);font-size:.97rem}
 /* The after delivery block was a bare eyebrow, heading and paragraph with no
    treatment at all, sitting hard against the bottom of the method cards. It is
@@ -599,6 +696,11 @@ section.raise .note,section.raise .method-note{background:var(--void)}
 /* Buttons press. Scale, not colour, is what makes a click feel received. */
 .btn-primary:active,.btn-ghost:active,.ghost:active,.cta:active,.btn:active,.navcta:active{
   transform:scale(.97)}
+/* A button that cannot be pressed says so. No page ships one today; the
+   first page that does should not have to invent the state. */
+.btn-primary:disabled,.btn-ghost:disabled,.ghost:disabled,.btn:disabled,
+.cta[aria-disabled="true"]{opacity:.45;cursor:not-allowed;transform:none;
+  pointer-events:none}
 .cta-row,.contact{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
 .close{margin-top:32px}
 
