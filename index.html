@@ -12,7 +12,15 @@
 <link rel="stylesheet" href="/assets/fonts.css">
 <link rel="stylesheet" href="/assets/system.css">
 <script defer src="/assets/scenes.js"></script>
+<!-- The photoreal layer is held back until it blends. The rendered
+     frames carry a lit ground plane whose bottom edge measures rgb(71,95,131)
+     against the page's rgb(5,7,13), so the opaque video reads as a glowing
+     rectangle in a black page. H.264 has no alpha, so this cannot be masked
+     away; it has to be re-rendered without the floor. The live canvas draws
+     transparent shapes straight onto the page and is seamless, which is why
+     it was kept. Re-enable once the floorless sequence is in.
 <script defer src="/assets/stack-video.js"></script>
+-->
 <script defer src="/assets/nav.js"></script>
 <script defer src="/assets/cursor.js"></script>
 </head>
