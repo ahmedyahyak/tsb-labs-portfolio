@@ -782,6 +782,14 @@ function stackScene(cv){
     }
   }
 
+  /* If the Cycles frames load, they take the canvas and this renderer
+     stands down. Until then, and forever if they never arrive, the live
+     scene is the section. The captions and the legend stay here either
+     way: they are DOM, and they belong to the section rather than to
+     whichever renderer is filling the canvas. */
+  var handedOver=false;
+  window.addEventListener('stack:video-ready', function(){ handedOver=true; });
+
   var last=0;
   function frame(ts){
     if(!live) return;
@@ -789,7 +797,8 @@ function stackScene(cv){
     var dt=Math.min(ts-last,50); last=ts;
     t += (target-t)*0.14;
     ang += dt*0.00005;
-    draw(); captions();
+    if(!handedOver) draw();
+    captions();
     requestAnimationFrame(frame);
   }
   /* the loop runs only while the track is on screen */
