@@ -1,9 +1,10 @@
-=== chunk 19..40 21:16:42
+=== chunk 1..30 22:16:31
     wrote 0
-=== chunk 41..70 21:21:21
+=== chunk 31..60 22:19:00
     wrote 0
-=== chunk 71..100 21:28:49
+=== chunk 61..90 22:22:13
     wrote 0
-=== chunk 101..120 21:36:59
+=== chunk 91..120 22:25:53
     wrote 0
-=== done 21:41:51, 120 frames total
+ls: frames/*.png: No such file or directory
+=== done 22:29:01, 0 frames

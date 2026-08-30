@@ -28,7 +28,16 @@ N=$(ls frames/*.png 2>/dev/null | wc -l | tr -d ' ')
 [ "$N" -eq 0 ] && { echo "no frames"; exit 1; }
 echo "  encoding $N frames"
 
-ffmpeg -y -loglevel error -framerate 30 -start_number 1 -i frames/f%04d.png \
+# Composite over the exact page hex rather than baking a background into the
+# render. A lit ground plane measured rgb(71,95,131) at the frame edge against
+# a page of rgb(5,7,13), so the opaque video read as a glowing rectangle. And
+# dialling a world colour to survive AgX plus exposure is guesswork: the first
+# attempt still landed 48 values out. Compositing an alpha render in sRGB
+# against the literal token is exact by construction, measured at delta 1.
+ffmpeg -y -loglevel error \
+  -f lavfi -i color=c=0x05070D:s=720x960:r=30 \
+  -framerate 30 -start_number 1 -i frames/f%04d.png \
+  -filter_complex "[0][1]overlay=format=auto:shortest=1[o];[o]setparams=color_primaries=bt709:color_trc=bt709:colorspace=bt709[v]" -map "[v]" \
   -c:v libx264 -crf 21 -g 12 -keyint_min 12 -sc_threshold 0 -bf 0 \
   -preset slow -tune film -pix_fmt yuv420p \
   -color_range pc -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
@@ -41,8 +50,12 @@ ffmpeg -y -loglevel error -framerate 30 -start_number 1 -i frames/f%04d.png \
 # warm ring is lit and the stack is open.
 GATE=$(printf "frames/f%04d.png" 91)
 [ -f "$GATE" ] && {
-  cwebp -quiet -q 78 "$GATE" -o ../assets/stack-poster.webp
-  command -v avifenc >/dev/null && avifenc -q 65 --speed 6 "$GATE" ../assets/stack-poster.avif >/dev/null 2>&1 || true
+  # flatten the poster onto the same ground, or it carries transparency the
+  # page will show through in the wrong place
+  ffmpeg -y -loglevel error -f lavfi -i color=c=0x05070D:s=720x960 -i "$GATE" \
+    -filter_complex "[0][1]overlay=format=auto:shortest=1" -frames:v 1 /tmp/poster-flat.png
+  cwebp -quiet -q 78 /tmp/poster-flat.png -o ../assets/stack-poster.webp
+  command -v avifenc >/dev/null && avifenc -q 65 --speed 6 /tmp/poster-flat.png ../assets/stack-poster.avif >/dev/null 2>&1 || true
 }
 
 echo "  mp4:    $(du -h ../assets/stack.mp4 | cut -f1)"
