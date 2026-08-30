@@ -154,19 +154,59 @@ function ventureScene(cv){
     {name:'Autonomous systems', at:function(i,t){
       var y=1-2*t, r=Math.sqrt(Math.max(0,1-y*y)), th=i*2.399963;
       return [Math.cos(th)*r*R*0.92, y*R*0.92, Math.sin(th)*r*R*0.92]; }},
+    /* 5^3 fills 125 of the 132. The old code wrapped the last seven back
+       onto occupied cells, which doubled seven nodes invisibly. Now they
+       orbit the lattice on a tilted ring: a cube being studied, which is
+       what frontier work is. */
     {name:'Frontier computing', at:function(i){
-      var n=5, x=i%n, y=Math.floor(i/n)%n, z=Math.floor(i/(n*n))%n, g=R*0.42;
-      return [(x-(n-1)/2)*g, (y-(n-1)/2)*g, (z-(n-1)/2)*g]; }},
-    {name:'Systems in production', at:function(i,t){
-      var L=Math.floor(t*4), k=i%33, c=6;
-      return [((k%c)-2.5)*R*0.30, (L-1.5)*R*0.52, (Math.floor(k/c)-2.5)*R*0.30]; }}
+      var n=5, g=R*0.42;
+      if(i<125){
+        var x=i%n, y=Math.floor(i/n)%n, z=Math.floor(i/(n*n));
+        return [(x-(n-1)/2)*g, (y-(n-1)/2)*g, (z-(n-1)/2)*g];
+      }
+      var a=(i-125)/7*Math.PI*2, rr=R*0.92;
+      return [Math.cos(a)*rr, Math.sin(a)*rr*0.38, Math.sin(a)*rr*0.80];
+    }},
+    /* Eleven rings of twelve: 132 exactly, no holes and no stray floater.
+       The old grid packed 33 nodes into 36 slots, so every layer shipped
+       with three gaps and the formula stranded one node alone above the
+       stack. The waisted profile is deliberate: a straight tube reads as a
+       pipe, a machined taper reads as a turbine, and production is the
+       machine that runs. */
+    {name:'Systems in production', at:function(i){
+      var ring=Math.floor(i/12), k=i%12;
+      var y=(ring-5)*R*0.24;
+      var waist=0.62+0.38*Math.abs(ring-5)/5;      // narrow middle, flared ends
+      var rr=R*0.66*waist;
+      var a=(k/12)*Math.PI*2 + ring*0.26;          // each ring turned slightly
+      return [Math.cos(a)*rr, y, Math.sin(a)*rr];
+    }}
   ];
 
   var P=[], i;
   for(i=0;i<N;i++) P.push({x:(Math.random()-0.5)*R*3, y:(Math.random()-0.5)*R*3,
                             z:(Math.random()-0.5)*R*3, tx:0, ty:0, tz:0, wait:0});
   var form=0, HOLD=4200, tSwitch=0, pinned=false;
-  var st={ang:-0.5, tilt:0.12, spin:0};
+  var st={ang:-0.5, tilt:0.12, spin:0, scroll:0, drift:0};
+
+  /* The cursor is a presence in the scene, not just a control. Nodes inside
+     its radius are pushed along the view plane; the same lerp that morphs
+     the forms then pulls them home, so the structure parts around the hand
+     and heals behind it. No extra physics loop, no springs to tune: the
+     easing that already exists is the spring. */
+  var cursor={x:-1e4, y:-1e4, on:false};
+  cv.addEventListener('pointermove', function(e){
+    var r=cv.getBoundingClientRect();
+    cursor.x=e.clientX-r.left; cursor.y=e.clientY-r.top; cursor.on=true;
+  }, {passive:true});
+  cv.addEventListener('pointerleave', function(){ cursor.on=false; cursor.x=-1e4; cursor.y=-1e4; });
+
+  /* Scroll turns the machine. The page position is read once per scroll
+     event, never per frame, and enters the projection as extra rotation and
+     a slower vertical drift, so scrolling past the hero visibly rotates the
+     structure while it lags the page like a heavy object would. */
+  var pageY=0;
+  window.addEventListener('scroll', function(){ pageY=window.scrollY||0; }, {passive:true});
 
   /* Where the layout says the scene may live, in canvas coordinates. */
   var Z={cx:0, cy:0, focal:400};
@@ -175,9 +215,10 @@ function ventureScene(cv){
     var zr=zone.getBoundingClientRect(), cr=cv.getBoundingClientRect();
     Z.cx = zr.left - cr.left + zr.width/2;
     Z.cy = zr.top  - cr.top  + zr.height/2;
-    /* Sized so the widest morph state stays inside the zone with margin:
-       projected halfwidth is focal/tz * (R * 1.5) at tz around 205. */
-    Z.focal = Math.min(zr.width, zr.height) * 1.05;
+    /* 1.05 was polite and read as an ornament. 1.34 makes the structure a
+       counterweight to the headline; the forms above were re-fitted so the
+       widest state still clears the zone at this focal length. */
+    Z.focal = Math.min(zr.width, zr.height) * 1.34;
   }
   var S=sizer(cv,ctx,readZone);
   var nameEl=document.getElementById('formName'), dotsEl=document.getElementById('dots');
@@ -230,12 +271,13 @@ function ventureScene(cv){
   });
 
   function proj(p){
-    var ca=Math.cos(st.ang), sa=Math.sin(st.ang);
+    var A=st.ang+st.scroll;
+    var ca=Math.cos(A), sa=Math.sin(A);
     var x=p.x*ca-p.z*sa, z0=p.x*sa+p.z*ca;
     var ct=Math.cos(st.tilt), stl=Math.sin(st.tilt);
     var y=p.y*ct-z0*stl, z=p.y*stl+z0*ct;
     var tz=z+205, f=Z.focal/Math.max(tz,1);
-    return {X:Z.cx+x*f, Y:Z.cy+y*f, s:f, z:tz};
+    return {X:Z.cx+x*f, Y:Z.cy+y*f+st.drift, s:f, z:tz};
   }
   function draw(){
     var a, b;
@@ -252,7 +294,9 @@ function ventureScene(cv){
     ctx.fillStyle=g; ctx.beginPath(); ctx.arc(Z.cx,gy,gw,0,Math.PI*2); ctx.fill();
     ctx.restore();
 
-    var pts=[]; for(a=0;a<N;a++) pts.push(proj(P[a]));
+    var pts=[]; for(a=0;a<N;a++){ pts.push(proj(P[a]));
+      /* screen position cached for the cursor field in the physics step */
+      P[a]._sx=pts[a].X; P[a]._sy=pts[a].Y; }
 
     /* Links faded, thinned and now tinted by their own depth, so the
        lattice has a near side and a far side instead of reading as a flat
@@ -274,9 +318,16 @@ function ventureScene(cv){
     var ord=pts.map(function(p,ix){return {p:p,ix:ix};}).sort(function(m,n){return n.p.z-m.p.z;});
     for(a=0;a<ord.length;a++){
       var o=ord[a], warm=(o.ix%17===0);
-      var r=Math.max(1.3, 2.1*o.p.s);
+      var r=Math.max(1.8, 2.9*o.p.s);
       var off=Math.abs(o.p.z-205), fi = off<30 ? 0 : (off<72 ? 1 : 2);
-      ctx.globalAlpha=Math.max(0.20, Math.min(1, o.p.s*205/Z.focal*1.6));
+      /* Nodes near the cursor wake up: a touch larger, fully lit, and the
+         blur is overridden to sharp, as though the hand carries focus. */
+      var near=0;
+      if(cursor.on){
+        var ndx=o.p.X-cursor.x, ndy=o.p.Y-cursor.y, nd2=ndx*ndx+ndy*ndy;
+        if(nd2<12100){ near=1-Math.sqrt(nd2)/110; r*=1+near*0.4; fi=0; }
+      }
+      ctx.globalAlpha=Math.max(0.20+near*0.5, Math.min(1, o.p.s*205/Z.focal*1.6));
       if(warm){
         ctx.save(); ctx.globalCompositeOperation='lighter';
         ctx.globalAlpha=Math.min(0.65, o.p.s*205/Z.focal*0.9);
@@ -320,10 +371,29 @@ function ventureScene(cv){
     if(!pinned && ts-tSwitch>HOLD){ form=(form+1)%FORMS.length; retarget(); tSwitch=ts; }
     var now=performance.now();
     var e=REDUCE?0.14:0.062;
+    /* View-plane axes, so a screen-space push lands in world space no
+       matter which way the scene is turned. */
+    var A=st.ang+st.scroll, ca=Math.cos(A), sa=Math.sin(A);
+    var ct=Math.cos(st.tilt), stl=Math.sin(st.tilt);
+    var RAD=110, RAD2=RAD*RAD;
     for(var k=0;k<N;k++){ var p=P[k];
+      if(!REDUCE && cursor.on && p._sx!==undefined){
+        var cdx=p._sx-cursor.x, cdy=p._sy-cursor.y, cd2=cdx*cdx+cdy*cdy;
+        if(cd2<RAD2 && cd2>0.01){
+          var cd=Math.sqrt(cd2), cf=(1-cd/RAD); cf=cf*cf*2.4;
+          var ux=cdx/cd, uy=cdy/cd;
+          p.x += ( ux*ca - uy*sa*stl)*cf;
+          p.z += (-ux*sa - uy*ca*stl)*cf;
+          p.y += ( uy*ct)*cf;
+        }
+      }
       if(!REDUCE && now<p.wait) continue;
       p.x+=(p.tx-p.x)*e; p.y+=(p.ty-p.y)*e; p.z+=(p.tz-p.z)*e; }
-    if(!REDUCE){ st.ang += dt*0.00006 + st.spin; st.spin*=0.94; }
+    if(!REDUCE){
+      st.ang += dt*0.00006 + st.spin; st.spin*=0.94;
+      st.scroll = pageY*0.0011;          // the machine turns as the page moves
+      st.drift  = pageY*0.16;            // and lags it, like something heavy
+    }
     /* packets advance, die at arrival, and are replaced on a slow clock */
     for(var pi=pulses.length-1;pi>=0;pi--){
       pulses[pi].t += pulses[pi].v*dt;
@@ -555,8 +625,160 @@ function landscapeScene(cv){
   seed(); requestAnimationFrame(frame);
 }
 
+/* ── Scene three: one build, in section ─────────────────────────────────
+   The scroll-driven dissection. A five plate stack, drawn live with the
+   same projection math as the hero, scrubbed against how far its track has
+   been scrolled. Live rendering instead of a frame sequence because the
+   asset weight is zero, a palette change is a token edit, and the playhead
+   can ease against scroll instead of snapping between frames.
+
+   Four beats: closed and turning; the plates separate and name themselves;
+   the access and audit plate takes the only warm light on the page; closed
+   again, with the legend left standing. The pin never fights the scroll:
+   the page moves at full speed and only the playhead eases. */
+function stackScene(cv){
+  if(REDUCE || !window.matchMedia('(min-width:720px)').matches) return;
+  var track=document.getElementById('stackTrack');
+  var head=document.getElementById('stackHead'), cap=document.getElementById('stackCap');
+  var legend=document.getElementById('stackLegend');
+  var lis=legend?[].slice.call(legend.children):[];
+  if(!track) return;
+  var ctx=cv.getContext('2d');
+  var S=sizer(cv,ctx);
+
+  var C_INK=token('--ink')||'#0a0d15', C_RAISE=token('--raise')||'#0f1421',
+      C_BLUE=token('--blue')||'#3d6ef7', C_ICE=token('--ice')||'#8fb4ff',
+      C_WARM=token('--warm')||'#e08a52', C_VOID=token('--void')||'#05070d';
+
+  /* plate order is top to bottom: interface down to infrastructure */
+  var PW=126, PD=88, PH=7, GATE=3;
+  var BEATS=[
+    ['Delivered as one system.',
+     'This is what you are handed: a running application, and nothing about it left exposed.'],
+    ['It has five parts. Always the same five.',
+     'Interface, service layer, data, access and audit, infrastructure. Named, so nothing hides.'],
+    ['One plate holds the keys.',
+     'A human approval on anything irreversible, and an audit trail under all of it.'],
+    ['Closed again. Handed over.',
+     'Reassembled, documented, and running in accounts with your name on them.']
+  ];
+  var beatShown=-1;
+
+  var t=0, target=0, ang=-0.62, live=false;
+  function smooth(x){ x=Math.max(0,Math.min(1,x)); return x*x*(3-2*x); }
+
+  function measure(){
+    var r=track.getBoundingClientRect();
+    var span=r.height-window.innerHeight;
+    target=span>0 ? Math.max(0,Math.min(1,-r.top/span)) : 0;
+  }
+  window.addEventListener('scroll', measure, {passive:true});
+  measure();
+
+  function proj(x,y,z){
+    var ca=Math.cos(ang), sa=Math.sin(ang);
+    var rx=x*ca-z*sa, rz=x*sa+z*ca;
+    var tl=0.42, ct=Math.cos(tl), stl=Math.sin(tl);
+    var ry=y*ct-rz*stl, rzz=y*stl+rz*ct;
+    var tz=rzz+300, f=Math.min(S.w,S.h)*1.05/Math.max(tz,1);
+    return {X:S.w*0.52+rx*f, Y:S.h*0.55+ry*f, z:tz};
+  }
+
+  function quad(a,b,c,d,fill,alpha){
+    ctx.globalAlpha=alpha; ctx.fillStyle=fill;
+    ctx.beginPath(); ctx.moveTo(a.X,a.Y); ctx.lineTo(b.X,b.Y);
+    ctx.lineTo(c.X,c.Y); ctx.lineTo(d.X,d.Y); ctx.closePath(); ctx.fill();
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,S.w,S.h);
+    var sep=smooth((t-0.22)/0.20)*(1-smooth((t-0.75)/0.20));   // open, then close
+    var gate=smooth((t-0.48)/0.10)*(1-smooth((t-0.76)/0.10));  // the warm beat
+    var gap=PH+1.5+sep*30;
+
+    /* contact shadow, the same grammar as the hero */
+    var gy=S.h*0.55+Math.min(S.w,S.h)*0.30, gw=Math.min(S.w,S.h)*0.42;
+    var g=ctx.createRadialGradient(S.w*0.52,gy,gw*0.06,S.w*0.52,gy,gw);
+    g.addColorStop(0,'rgba(9,13,26,0.5)'); g.addColorStop(1,'rgba(9,13,26,0)');
+    ctx.save(); ctx.translate(S.w*0.52,gy); ctx.scale(1,0.2); ctx.translate(-S.w*0.52,-gy);
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(S.w*0.52,gy,gw,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    /* plates far to near so the nearer ones paint over */
+    var order=[0,1,2,3,4].map(function(i){
+      var y=(i-2)*gap;
+      return {i:i, y:y, c:proj(0,y,0)};
+    }).sort(function(m,n){ return n.c.z-m.c.z; });
+
+    for(var q=0;q<order.length;q++){
+      var pl=order[q], i=pl.i, y=pl.y;
+      var hot=(i===GATE)?gate:0;
+      var x0=-PW/2, x1=PW/2, z0=-PD/2, z1=PD/2;
+      var yT=y-PH/2, yB=y+PH/2;
+      var p=[proj(x0,yT,z0),proj(x1,yT,z0),proj(x1,yT,z1),proj(x0,yT,z1),
+             proj(x0,yB,z0),proj(x1,yB,z0),proj(x1,yB,z1),proj(x0,yB,z1)];
+      var top=mix(C_RAISE,C_ICE,0.05+hot*0.05);
+      var sideA=mix(C_INK,C_VOID,0.25), sideB=mix(C_INK,C_VOID,0.45);
+      /* two sides face the camera at this yaw; draw both, top last */
+      quad(p[4],p[5],p[1],p[0],sideA,0.95);
+      quad(p[5],p[6],p[2],p[1],sideB,0.95);
+      quad(p[0],p[1],p[2],p[3],top,0.97);
+      /* edges: blue hairline, or warm at the gate's moment */
+      ctx.globalAlpha=0.65+hot*0.35;
+      ctx.strokeStyle=hot>0.02?mix(C_BLUE,C_WARM,hot):C_BLUE;
+      ctx.lineWidth=hot>0.02?1.4:0.8;
+      ctx.beginPath(); ctx.moveTo(p[0].X,p[0].Y); ctx.lineTo(p[1].X,p[1].Y);
+      ctx.lineTo(p[2].X,p[2].Y); ctx.lineTo(p[3].X,p[3].Y); ctx.closePath(); ctx.stroke();
+      /* the approval ring, drawn on the gate plate as it takes the light */
+      if(hot>0.03){
+        var rc=proj(0,yT,0), rr=Math.max(8,26*hot);
+        ctx.globalAlpha=hot*0.9; ctx.strokeStyle=C_WARM; ctx.lineWidth=1.5;
+        ctx.save(); ctx.translate(rc.X,rc.Y); ctx.scale(1,0.42);
+        ctx.beginPath(); ctx.arc(0,0,rr,0,Math.PI*2); ctx.stroke();
+        ctx.restore();
+      }
+      /* corner markers: the instrument reading of a machined part */
+      ctx.globalAlpha=0.75; ctx.fillStyle=C_ICE;
+      for(var m2=0;m2<4;m2++){
+        ctx.beginPath(); ctx.arc(p[m2].X,p[m2].Y,1.6,0,Math.PI*2); ctx.fill();
+      }
+    }
+    ctx.globalAlpha=1;
+  }
+
+  function captions(){
+    var b = t<0.22?0 : t<0.48?1 : t<0.76?2 : 3;
+    if(b!==beatShown){
+      beatShown=b;
+      if(head) head.textContent=BEATS[b][0];
+      if(cap)  cap.textContent =BEATS[b][1];
+    }
+    for(var i=0;i<lis.length;i++){
+      if(t>0.26+i*0.045) lis[i].classList.add('on');   // lit once, left standing
+    }
+  }
+
+  var last=0;
+  function frame(ts){
+    if(!live) return;
+    if(!last) last=ts;
+    var dt=Math.min(ts-last,50); last=ts;
+    t += (target-t)*0.14;
+    ang += dt*0.00005;
+    draw(); captions();
+    requestAnimationFrame(frame);
+  }
+  /* the loop runs only while the track is on screen */
+  new IntersectionObserver(function(es){
+    var on=es[0].isIntersecting;
+    if(on && !live){ live=true; last=0; requestAnimationFrame(frame); }
+    if(!on) live=false;
+  },{rootMargin:'120px'}).observe(track);
+}
+
 document.addEventListener('DOMContentLoaded', function(){
   var a=document.getElementById('venture');   if(a) ventureScene(a);
   var b=document.getElementById('landscape'); if(b) landscapeScene(b);
+  var c=document.getElementById('stack');     if(c) stackScene(c);
 });
 })();

@@ -749,6 +749,78 @@ section.raise .note,section.raise .method-note{background:var(--void)}
   padding-top:22px;border-top:1px solid var(--line);font-family:var(--mono);
   font-size:var(--lbl);letter-spacing:.09em;text-transform:uppercase;color:var(--faint)}
 
+/* ── one build, in section ───────────────────────────────────────────────
+   A sticky viewport inside a tall track; scenes.js scrubs the dissection
+   against how far the track has been scrolled. The pin only exists on wide
+   screens with motion allowed. Everyone else gets the list, which is the
+   actual content; the canvas is its illustration. */
+.stackband{border-top:1px solid var(--line);background:var(--ink)}
+.stack-track{height:340vh;position:relative}
+.stack-pin{position:sticky;top:0;height:100svh;overflow:hidden}
+#stack{position:absolute;inset:0;width:100%;height:100%}
+.stack-copy{position:absolute;left:0;right:0;top:9vh;z-index:2;pointer-events:none;max-width:none}
+.stack-copy h2{max-width:24ch;transition:opacity .3s}
+.stack-copy .lede{margin-top:14px;max-width:44ch;transition:opacity .3s}
+.stack-legend{position:absolute;right:var(--gut);top:50%;transform:translateY(-50%);
+  z-index:2;list-style:none;display:grid;gap:12px;padding:0;margin:0;
+  font-family:var(--mono);font-size:var(--lbl);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--faint)}
+.stack-legend li{opacity:0;transform:translateX(8px);
+  transition:opacity .4s var(--ease-out),transform .4s var(--ease-out),color .3s}
+.stack-legend li.on{opacity:1;transform:none}
+.stack-legend li.warm.on{color:var(--warm)}
+/* the fallback list is the content, styled as content */
+.stack-fallback{padding:var(--sec) var(--gut)}
+.stack-fallback ol{list-style:none;padding:0;max-width:64ch;display:grid;gap:14px}
+.stack-fallback b{font-family:var(--mono);font-size:var(--lbl);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--blue-label);margin-right:10px}
+.stack-fallback li{color:var(--mute);line-height:1.6}
+/* wide + motion: the canvas carries it, the list yields */
+@media (min-width:720px) and (prefers-reduced-motion: no-preference){
+  .stack-fallback{display:none}
+}
+/* narrow or reduced motion: no pin, no tall track, no canvas */
+@media (max-width:719px), (prefers-reduced-motion: reduce){
+  .stack-track{height:auto}
+  .stack-pin{position:static;height:auto;min-height:0;padding:var(--sec) 0 0}
+  #stack{display:none}
+  .stack-copy{position:static;padding:0 var(--gut)}
+  .stack-legend{display:none}
+}
+
+/* ── the blueprint cursor ────────────────────────────────────────────────
+   Painted by cursor.js on fine pointers only. The html.bpc-on gate means a
+   phone, a missing script, or an error leaves the native cursor untouched.
+   Text fields keep their I-beam: editing beats theatre. */
+html.bpc-on, html.bpc-on a, html.bpc-on button, html.bpc-on summary{cursor:none}
+html.bpc-on input, html.bpc-on textarea, html.bpc-on select{cursor:auto}
+#bpc{position:fixed;inset:0;z-index:9999;pointer-events:none}
+#bpc > div{position:absolute;top:0;left:0;will-change:transform}
+.bpc-dot{width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;
+  background:var(--ice);transition:background .15s}
+.bpc-ring{width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;
+  border:1px solid var(--blue);opacity:.75;
+  transition:width .18s var(--ease-out),height .18s var(--ease-out),
+    margin .18s var(--ease-out),border-color .18s,opacity .18s}
+/* over a link or button the ring opens and firms: the site meets the hand */
+#bpc.bpc-hot .bpc-ring{width:52px;height:52px;margin:-26px 0 0 -26px;
+  border-color:var(--ice);opacity:1}
+#bpc.bpc-hot .bpc-dot{background:var(--warm)}
+#bpc.bpc-press .bpc-ring{width:26px;height:26px;margin:-13px 0 0 -13px}
+/* over a scene the instrument changes: reticle, hairlines, coordinates */
+.bpc-x,.bpc-y,.bpc-co{opacity:0;transition:opacity .2s}
+#bpc.bpc-scene .bpc-x{opacity:1;left:0;right:0;height:1px;width:100%;
+  background:linear-gradient(90deg,transparent,rgba(61,110,247,.28) 20%,
+    rgba(61,110,247,.28) 80%,transparent)}
+#bpc.bpc-scene .bpc-y{opacity:1;top:0;bottom:0;width:1px;height:100%;
+  background:linear-gradient(180deg,transparent,rgba(61,110,247,.28) 20%,
+    rgba(61,110,247,.28) 80%,transparent)}
+#bpc.bpc-scene .bpc-co{opacity:1;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.14em;color:var(--faint);white-space:nowrap}
+#bpc.bpc-scene .bpc-ring{opacity:0}
+#bpc.bpc-text .bpc-dot,#bpc.bpc-text .bpc-ring{opacity:0}
+html.bpc-on input:hover, html.bpc-on textarea:hover{cursor:text}
+
 /* the old scroll-reveal is neutralised; content must never start hidden */
 .reveal{opacity:1;transform:none}
 
