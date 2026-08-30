@@ -188,6 +188,7 @@ function ventureScene(cv){
                             z:(Math.random()-0.5)*R*3, tx:0, ty:0, tz:0, wait:0});
   var form=0, HOLD=4200, tSwitch=0, pinned=false;
   var st={ang:-0.5, tilt:0.12, spin:0, scroll:0, drift:0};
+  var heroLive=true;
 
   /* The cursor is a presence in the scene, not just a control. Nodes inside
      its radius are pushed along the view plane; the same lerp that morphs
@@ -366,9 +367,14 @@ function ventureScene(cv){
   }
   var last=0;
   function frame(ts){
+    if(!heroLive) return;                    // the observer restarts us
     if(!last){ last=ts; tSwitch=ts; }
     var dt=Math.min(ts-last,50); last=ts;
-    if(!pinned && ts-tSwitch>HOLD){ form=(form+1)%FORMS.length; retarget(); tSwitch=ts; }
+    /* Reduced motion holds one composed formation instead of flying 132
+       nodes through space every four seconds. The dots stay live, so the
+       capability list is still explorable on intent, which is the
+       informative part. Found in expert review, 2026-08-30. */
+    if(!pinned && !REDUCE && ts-tSwitch>HOLD){ form=(form+1)%FORMS.length; retarget(); tSwitch=ts; }
     var now=performance.now();
     var e=REDUCE?0.14:0.062;
     /* View-plane axes, so a screen-space push lands in world space no
@@ -406,7 +412,18 @@ function ventureScene(cv){
   var lastPulse=0;
   var hint=document.getElementById('heroHint');
   orbit(cv, st, function(){ if(hint) hint.classList.add('gone'); });
-  retarget(); requestAnimationFrame(frame);
+  retarget();
+  /* The loop runs only while the hero can be seen. Without this gate the
+     O(N²) link pass burned every frame from the fold to the footer,
+     including the whole time the dissection was pinned, which made the
+     "the two loops never run at once" assumption false. Same pattern as
+     stackScene, which had it right from the start. */
+  var running=false;
+  new IntersectionObserver(function(es){
+    heroLive=es[0].isIntersecting;
+    if(heroLive && !running){ running=true; last=0; requestAnimationFrame(frame); }
+    if(!heroLive) running=false;
+  },{rootMargin:'200px'}).observe(cv);
 }
 
 /* ── Scene two: an optimisation landscape, solved badly on purpose ─────── */
@@ -610,8 +627,9 @@ function landscapeScene(cv){
     }
     ctx.globalAlpha=1;
   }
-  var last=0, acc=0;
+  var last=0, acc=0, landLive=true, landRunning=false;
   function frame(ts){
+    if(!landLive){ landRunning=false; return; }
     if(!last) last=ts;
     var dt=Math.min(ts-last,50); last=ts;
     acc+=dt; if(acc>16){ step(); acc=0; }
@@ -622,7 +640,12 @@ function landscapeScene(cv){
   orbit(cv, st);
   var again=document.getElementById('reseed');
   if(again) again.addEventListener('click', seed);
-  seed(); requestAnimationFrame(frame);
+  seed();
+  /* same visibility gate as the other scenes: no annealing for nobody */
+  new IntersectionObserver(function(es){
+    landLive=es[0].isIntersecting;
+    if(landLive && !landRunning){ landRunning=true; last=0; requestAnimationFrame(frame); }
+  },{rootMargin:'200px'}).observe(cv);
 }
 
 /* ── Scene three: one build, in section ─────────────────────────────────
@@ -692,7 +715,10 @@ function stackScene(cv){
 
   function draw(){
     ctx.clearRect(0,0,S.w,S.h);
-    var sep=smooth((t-0.22)/0.20)*(1-smooth((t-0.75)/0.20));   // open, then close
+    /* Separation begins at 0.08, not 0.22: the old head left ~53vh of
+       scroll with a closed, apparently stuck stack. ~19vh of establishing
+       beat, then motion. The gate window is untouched. */
+    var sep=smooth((t-0.08)/0.22)*(1-smooth((t-0.75)/0.20));   // open, then close
     var gate=smooth((t-0.48)/0.10)*(1-smooth((t-0.76)/0.10));  // the warm beat
     var gap=PH+1.5+sep*30;
 
@@ -737,24 +763,22 @@ function stackScene(cv){
         ctx.beginPath(); ctx.arc(0,0,rr,0,Math.PI*2); ctx.stroke();
         ctx.restore();
       }
-      /* corner markers: the instrument reading of a machined part */
-      ctx.globalAlpha=0.75; ctx.fillStyle=C_ICE;
-      for(var m2=0;m2<4;m2++){
-        ctx.beginPath(); ctx.arc(p[m2].X,p[m2].Y,1.6,0,Math.PI*2); ctx.fill();
-      }
+      /* Corner markers were cut in expert review: they claimed the
+         vocabulary of measurement with nothing measured. The hairline
+         edges and the machined taper already say precision. */
     }
     ctx.globalAlpha=1;
   }
 
   function captions(){
-    var b = t<0.22?0 : t<0.48?1 : t<0.76?2 : 3;
+    var b = t<0.10?0 : t<0.48?1 : t<0.76?2 : 3;
     if(b!==beatShown){
       beatShown=b;
       if(head) head.textContent=BEATS[b][0];
       if(cap)  cap.textContent =BEATS[b][1];
     }
     for(var i=0;i<lis.length;i++){
-      if(t>0.26+i*0.045) lis[i].classList.add('on');   // lit once, left standing
+      if(t>0.14+i*0.045) lis[i].classList.add('on');   // lit once, left standing
     }
   }
 

@@ -38,14 +38,19 @@
 
   var HOT = 'a, button, [role="button"], summary, input[type="submit"], .dot';
   var SCENE = 'canvas.scene, #landscape, #stack';
-  var TEXT = 'input:not([type="submit"]), textarea, select, [contenteditable]';
+  /* Prose is text too: over readable copy the instrument yields to the
+     I-beam, which is the one honest signal that these words are yours to
+     take. Expert review, 2026-08-30. */
+  var TEXT = 'input:not([type="submit"]), textarea, select, [contenteditable], ' +
+             'p, li, h1, h2, h3, figcaption, .lede';
 
   document.addEventListener('pointermove', function (e) {
     mx = e.clientX; my = e.clientY;
     var t = e.target;
-    if (t.closest(TEXT)) { mode = 'text'; hotEl = null; }
+    /* hot before text: a link inside a paragraph is a link */
+    if ((hotEl = t.closest(HOT))) { mode = 'hot'; }
     else if (t.closest(SCENE)) { mode = 'scene'; hotEl = null; }
-    else if ((hotEl = t.closest(HOT))) { mode = 'hot'; }
+    else if (t.closest(TEXT)) { mode = 'text'; hotEl = null; }
     else { mode = 'idle'; hotEl = null; }
   }, { passive: true });
 

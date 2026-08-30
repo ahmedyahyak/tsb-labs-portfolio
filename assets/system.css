@@ -816,10 +816,15 @@ html.bpc-on input, html.bpc-on textarea, html.bpc-on select{cursor:auto}
   background:linear-gradient(180deg,transparent,rgba(61,110,247,.28) 20%,
     rgba(61,110,247,.28) 80%,transparent)}
 #bpc.bpc-scene .bpc-co{opacity:1;font-family:var(--mono);font-size:10.5px;
-  letter-spacing:.14em;color:var(--faint);white-space:nowrap}
+  letter-spacing:.14em;color:var(--faint);white-space:nowrap;
+  text-shadow:0 1px 3px rgba(5,7,13,.9)}
 #bpc.bpc-scene .bpc-ring{opacity:0}
 #bpc.bpc-text .bpc-dot,#bpc.bpc-text .bpc-ring{opacity:0}
 html.bpc-on input:hover, html.bpc-on textarea:hover{cursor:text}
+/* over prose the native I-beam returns and the instrument stands down */
+html.bpc-on p, html.bpc-on li, html.bpc-on h1, html.bpc-on h2,
+html.bpc-on h3, html.bpc-on figcaption, html.bpc-on .lede{cursor:text}
+html.bpc-on p a, html.bpc-on li a{cursor:none}
 
 /* the old scroll-reveal is neutralised; content must never start hidden */
 .reveal{opacity:1;transform:none}
