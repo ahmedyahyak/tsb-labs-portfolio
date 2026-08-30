@@ -3,3 +3,10 @@
 node_modules/
 .vercel
 .env*
+
+# Rendered frames are regenerable from render/tsb-stack.blend and are large.
+# Two 120-frame sequences went into history before this was noticed, which is
+# most of the repo's weight. The blend and the scripts are the source; the
+# frames are output.
+render/frames/
+render/*.png
