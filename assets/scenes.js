@@ -44,16 +44,49 @@ function mix(a, b, t){
                +Math.round(x[2]+(y[2]-x[2])*t)+')';
 }
 
-/* One lit sphere, drawn once per colour and stamped ever after. */
+/* One lit sphere, drawn once per colour and stamped ever after.
+
+   Three lights, because one is what makes 3D read as clip art: a key from
+   the top left, a cool ground bounce on the shadow side in the ice tone
+   (the studio-light touch that says material rather than disc), and a
+   tight specular point. All of it costs nothing per frame; it is baked
+   into the sprite once. */
 function sphereSprite(color){
   var s=document.createElement('canvas'); s.width=64; s.height=64;
   var c=s.getContext('2d');
-  var g=c.createRadialGradient(24,22,3,32,32,30);
-  g.addColorStop(0, mix(color,'#ffffff',0.62));
-  g.addColorStop(0.42, color);
-  g.addColorStop(1, mix(color,'#05070d',0.55));
+  var g=c.createRadialGradient(24,22,2,32,32,30);
+  g.addColorStop(0,    mix(color,'#ffffff',0.72));
+  g.addColorStop(0.30, mix(color,'#ffffff',0.18));
+  g.addColorStop(0.66, color);
+  g.addColorStop(1,    mix(color,'#05070d',0.62));
   c.fillStyle=g; c.beginPath(); c.arc(32,32,30,0,Math.PI*2); c.fill();
+  c.save(); c.beginPath(); c.arc(32,32,30,0,Math.PI*2); c.clip();
+  c.globalCompositeOperation='lighter';
+  var b=c.createRadialGradient(44,46,2,44,46,20);
+  b.addColorStop(0,'rgba(143,180,255,0.30)');
+  b.addColorStop(1,'rgba(143,180,255,0)');
+  c.fillStyle=b; c.fillRect(0,0,64,64);
+  var sp=c.createRadialGradient(22,19,0,22,19,7);
+  sp.addColorStop(0,'rgba(255,255,255,0.85)');
+  sp.addColorStop(1,'rgba(255,255,255,0)');
+  c.fillStyle=sp; c.fillRect(0,0,64,64);
+  c.restore();
   return s;
+}
+/* Depth of field, paid for once. A blurred copy of a sprite is a lens,
+   and stamping it is the same price as stamping the sharp one. Browsers
+   without ctx.filter quietly stamp the sharp sprite instead, which is
+   exactly what this file did before. */
+function blurred(sprite, px){
+  var s=document.createElement('canvas'); s.width=64; s.height=64;
+  var c=s.getContext('2d');
+  if(typeof c.filter==='string'){ c.filter='blur('+px+'px)'; }
+  c.drawImage(sprite,4,4,56,56);
+  return s;
+}
+function focusSet(color){
+  var sharp=sphereSprite(color);
+  return [sharp, blurred(sharp,1.6), blurred(sharp,3.4)];
 }
 /* The soft additive halo behind anything warm. */
 function glowSprite(color){
@@ -148,9 +181,32 @@ function ventureScene(cv){
   }
   var S=sizer(cv,ctx,readZone);
   var nameEl=document.getElementById('formName'), dotsEl=document.getElementById('dots');
-  var SPH_B=sphereSprite(token('--blue')||'#3d6ef7');
-  var SPH_W=sphereSprite(token('--warm')||'#e08a52');
-  var GLOW_W=glowSprite(token('--warm')||'#e08a52');
+  var cBlue=token('--blue')||'#3d6ef7', cIce=token('--ice')||'#8fb4ff',
+      cWarm=token('--warm')||'#e08a52';
+  var SPH_B=focusSet(cBlue), SPH_W=focusSet(cWarm);
+  var GLOW_W=glowSprite(cWarm), GLOW_B=glowSprite(cBlue);
+  /* The lattice is graded by depth in colour as well as alpha: near links
+     lean toward ice, far links sink toward the void. Three strokes cover
+     it; mixing per link per frame would not survive the O(N²) loop. */
+  var LK_NEAR=mix(cBlue,cIce,0.45), LK_MID=cBlue, LK_FAR=mix(cBlue,'#05070d',0.38);
+
+  /* Light travelling the lattice. A structure whose edges carry packets
+     reads as a system doing work; a static lattice reads as a diagram.
+     Budgeted: at most seven alive, spawned only when a real link exists,
+     and none at all under reduced motion. */
+  var pulses=[];
+  function spawnPulse(now){
+    if(REDUCE || pulses.length>=7) return;
+    var L2=Math.pow(R*0.46,2);
+    for(var tries=0;tries<12;tries++){
+      var a=(Math.random()*N)|0, b=(Math.random()*N)|0;
+      if(a===b) continue;
+      var dx=P[a].x-P[b].x, dy=P[a].y-P[b].y, dz=P[a].z-P[b].z;
+      if(dx*dx+dy*dy+dz*dz>L2) continue;
+      pulses.push({a:a, b:b, t:0, v:0.0011+Math.random()*0.0009});
+      return;
+    }
+  }
 
   function retarget(){
     var f=FORMS[form], k, now=performance.now();
@@ -182,7 +238,7 @@ function ventureScene(cv){
     return {X:Z.cx+x*f, Y:Z.cy+y*f, s:f, z:tz};
   }
   function draw(){
-    var cB=token('--blue')||'#3d6ef7', a, b;
+    var a, b;
     ctx.clearRect(0,0,S.w,S.h);
 
     /* A contact shadow under the mass. Weight is what separates an object in
@@ -198,23 +254,28 @@ function ventureScene(cv){
 
     var pts=[]; for(a=0;a<N;a++) pts.push(proj(P[a]));
 
-    /* Links faded and thinned by their own depth, so the lattice has a near
-       side and a far side instead of reading as a flat net. */
-    ctx.strokeStyle=cB;
+    /* Links faded, thinned and now tinted by their own depth, so the
+       lattice has a near side and a far side instead of reading as a flat
+       net. */
     var L2=Math.pow(R*0.46,2);
     for(a=0;a<N;a++) for(b=a+1;b<N;b++){
       var dx=P[a].x-P[b].x, dy=P[a].y-P[b].y, dz=P[a].z-P[b].z, d2=dx*dx+dy*dy+dz*dz;
       if(d2>L2) continue;
       var depth=Math.min(1,(pts[a].s+pts[b].s)*0.5*205/Z.focal*1.35);
+      ctx.strokeStyle = depth>0.86 ? LK_NEAR : (depth>0.6 ? LK_MID : LK_FAR);
       ctx.globalAlpha=(1-d2/L2)*0.34*depth;
       ctx.lineWidth=0.55+depth*0.75;
       ctx.beginPath(); ctx.moveTo(pts[a].X,pts[a].Y); ctx.lineTo(pts[b].X,pts[b].Y); ctx.stroke();
     }
 
+    /* Depth of field. The focal plane sits at the structure's centre; a
+       node's distance from it picks the sharp, soft or softer sprite. The
+       camera acquires a lens for the price of an array index. */
     var ord=pts.map(function(p,ix){return {p:p,ix:ix};}).sort(function(m,n){return n.p.z-m.p.z;});
     for(a=0;a<ord.length;a++){
       var o=ord[a], warm=(o.ix%17===0);
       var r=Math.max(1.3, 2.1*o.p.s);
+      var off=Math.abs(o.p.z-205), fi = off<30 ? 0 : (off<72 ? 1 : 2);
       ctx.globalAlpha=Math.max(0.20, Math.min(1, o.p.s*205/Z.focal*1.6));
       if(warm){
         ctx.save(); ctx.globalCompositeOperation='lighter';
@@ -222,8 +283,33 @@ function ventureScene(cv){
         ctx.drawImage(GLOW_W, o.p.X-r*4, o.p.Y-r*4, r*8, r*8);
         ctx.restore();
         ctx.globalAlpha=Math.max(0.25, Math.min(1, o.p.s*205/Z.focal*1.6));
+      }else if(o.p.z<172){
+        /* the nearest blue nodes carry a faint bloom of their own, so the
+           front of the structure feels lit rather than merely close */
+        ctx.save(); ctx.globalCompositeOperation='lighter';
+        ctx.globalAlpha=0.16;
+        ctx.drawImage(GLOW_B, o.p.X-r*3, o.p.Y-r*3, r*6, r*6);
+        ctx.restore();
+        ctx.globalAlpha=Math.max(0.25, Math.min(1, o.p.s*205/Z.focal*1.6));
       }
-      ctx.drawImage(warm?SPH_W:SPH_B, o.p.X-r, o.p.Y-r, r*2, r*2);
+      ctx.drawImage((warm?SPH_W:SPH_B)[fi], o.p.X-r, o.p.Y-r, r*2, r*2);
+    }
+
+    /* The packets. Additive ice light moving node to node, with a short
+       tail; they ride between the lattice and the spheres. */
+    if(pulses.length){
+      ctx.save(); ctx.globalCompositeOperation='lighter';
+      for(a=pulses.length-1;a>=0;a--){
+        var pu=pulses[a], pa=pts[pu.a], pb=pts[pu.b];
+        for(var kk=0;kk<3;kk++){
+          var tt=pu.t-kk*0.055; if(tt<0) continue;
+          var X=pa.X+(pb.X-pa.X)*tt, Y=pa.Y+(pb.Y-pa.Y)*tt;
+          var ss=(pa.s+(pb.s-pa.s)*tt)*205/Z.focal;
+          ctx.globalAlpha=(0.5-kk*0.16)*Math.min(1,ss*1.4);
+          ctx.drawImage(GLOW_B, X-5, Y-5, 10, 10);
+        }
+      }
+      ctx.restore();
     }
     ctx.globalAlpha=1;
   }
@@ -238,9 +324,16 @@ function ventureScene(cv){
       if(!REDUCE && now<p.wait) continue;
       p.x+=(p.tx-p.x)*e; p.y+=(p.ty-p.y)*e; p.z+=(p.tz-p.z)*e; }
     if(!REDUCE){ st.ang += dt*0.00006 + st.spin; st.spin*=0.94; }
+    /* packets advance, die at arrival, and are replaced on a slow clock */
+    for(var pi=pulses.length-1;pi>=0;pi--){
+      pulses[pi].t += pulses[pi].v*dt;
+      if(pulses[pi].t>1) pulses.splice(pi,1);
+    }
+    if(now-lastPulse>640){ spawnPulse(now); lastPulse=now; }
     readZone();
     draw(); requestAnimationFrame(frame);
   }
+  var lastPulse=0;
   var hint=document.getElementById('heroHint');
   orbit(cv, st, function(){ if(hint) hint.classList.add('gone'); });
   retarget(); requestAnimationFrame(frame);
@@ -289,6 +382,14 @@ function landscapeScene(cv){
     C_WARM = token('--warm')||'#e08a52';
     quads=[];
     var bw=WELLS[0];
+    /* One directional light over the terrain, fixed at the top left like
+       the sphere sprites' key. Each quad's normal comes from its two edge
+       vectors, and the lambert term sculpts the slopes: lit faces climb
+       toward ice, shadowed faces sink toward the void. This is what turns
+       a colour ramp into relief, and it is all paid here, once, because
+       the terrain never changes; only the projection does. */
+    var LX=-0.48, LY=0.78, LZ=-0.40;
+    var ln=Math.sqrt(LX*LX+LY*LY+LZ*LZ); LX/=ln; LY/=ln; LZ/=ln;
     for(var i=0;i<M;i++) for(var j=0;j<M;j++){
       var h=(mesh[i][j].h+mesh[i+1][j].h+mesh[i][j+1].h+mesh[i+1][j+1].h)/4;
       var cx=(mesh[i][j].x+mesh[i+1][j+1].x)/2, cy=(mesh[i][j].y+mesh[i+1][j+1].y)/2;
@@ -296,12 +397,22 @@ function landscapeScene(cv){
       var ridge=Math.max(0,h)*1.6;
       var dx=cx-bw.x, dy=cy-bw.y;
       var best=Math.exp(-(dx*dx+dy*dy)/0.05);      // near the true answer
+      /* normal of the quad in (x, h, y) space, from its edge vectors */
+      var e1x=2/M, e1h=mesh[i+1][j].h-mesh[i][j].h;
+      var e2y=2/M, e2h=mesh[i][j+1].h-mesh[i][j].h;
+      var nx=-e1h*e2y, nyy=e1x*e2y, nz=-e1x*e2h;
+      var nl=Math.sqrt(nx*nx+nyy*nyy+nz*nz)||1;
+      var lam=Math.max(0,(nx*LX+nyy*LY+nz*LZ)/nl);  // 0 shadow .. 1 facing
       var col=mix(C_INK, C_BLUE, 0.10+depth*0.72);
+      col=mix(col,'#05070d',(1-lam)*0.42);
+      if(lam>0.86) col=mix(col, C_ICE, (lam-0.86)*2.2);
       if(ridge>0.02) col=mix(col, C_ICE, Math.min(0.30,ridge));
       if(best>0.05)  col=mix(col, C_WARM, best*0.55*depth);
       quads.push({i:i, j:j, fill:col, line:mix(col,C_ICE,0.16)});
     }
+    GL_W=glowSprite(C_WARM);
   }
+  var GL_W;
   shade();
 
   var walkers=[], settled=0, found=0;
@@ -382,9 +493,14 @@ function landscapeScene(cv){
     ctx.globalAlpha=1;
 
     /* The true answer, marked before anyone finds it: a pulsing ring over
-       the deepest well. A ring with spread and no blur, the same grammar as
-       a focus ring, not a glow. */
+       the deepest well, resting on a soft warm bloom so the valley itself
+       appears lit from within. Ring grammar for the mark, additive light
+       for the atmosphere. */
     var bw=WELLS[0], bp=proj(bw.x, f(bw.x,bw.y), bw.y);
+    ctx.save(); ctx.globalCompositeOperation='lighter';
+    ctx.globalAlpha=0.30+Math.sin(pulse)*0.10;
+    ctx.drawImage(GL_W, bp.X-34, bp.Y-30, 68, 60);
+    ctx.restore();
     ctx.strokeStyle=C_WARM;
     ctx.globalAlpha=0.55+Math.sin(pulse)*0.25;
     ctx.lineWidth=1.5;
@@ -408,6 +524,12 @@ function landscapeScene(cv){
     }
     for(i=0;i<walkers.length;i++){
       var w2=walkers[i], p=proj(w2.x, f(w2.x,w2.y), w2.y), hot=w2.done && w2.good;
+      if(hot){
+        ctx.save(); ctx.globalCompositeOperation='lighter';
+        ctx.globalAlpha=0.4;
+        ctx.drawImage(GL_W, p.X-11, p.Y-11, 22, 22);
+        ctx.restore();
+      }
       ctx.globalAlpha=w2.done?(hot?1:0.55):0.95;
       ctx.fillStyle=hot?C_WARM:C_ICE;
       ctx.beginPath(); ctx.arc(p.X,p.Y,hot?4.2:2.8,0,Math.PI*2); ctx.fill();
@@ -423,7 +545,7 @@ function landscapeScene(cv){
     if(!last) last=ts;
     var dt=Math.min(ts-last,50); last=ts;
     acc+=dt; if(acc>16){ step(); acc=0; }
-    pulse+=dt*0.004;
+    if(!REDUCE) pulse+=dt*0.004;
     if(!REDUCE){ st.ang += dt*0.00004 + st.spin; st.spin*=0.94; }
     draw(); requestAnimationFrame(frame);
   }
