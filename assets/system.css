@@ -266,7 +266,16 @@ a:visited{color:inherit}
    three lines and spilling past the 66px bar. The wordmark carries the
    brand on a phone; the positioning line returns at the first width where
    it fits on one line. */
-@media(max-width:640px){.bs{display:none}}
+/* Measured 3 September at 390 and 768: the bar overflowed by 25px and 37px on
+   every page. Below 880 the links are already behind the hamburger, so the
+   bar holds the lockup, the hamburger and Book a call; the tagline does not
+   fit beside them until the links return, so it goes at the same width the
+   links go. Under 480 the call to action loses its air, not its words. */
+@media(max-width:880px){.bs{display:none}}
+@media(max-width:480px){
+  .navin{gap:12px}
+  .navcta{padding:10px 12px;letter-spacing:.08em}
+}
 .navlinks{display:flex;gap:26px}
 .navlinks a{font-size:13.5px;color:var(--mute);text-decoration:none;transition:color .15s}
 .navlinks a:hover,.navlinks a[aria-current="page"]{color:var(--text)}
@@ -286,6 +295,12 @@ a:visited{color:inherit}
    The control is the word "Menu", not a hamburger. This site has no icon
    set, and a word needs no explanation. */
 .mnav{display:none}
+/* Chrome hides a closed details' children with a UA rule that an author
+   display:flex on .mnav nav overrides, so the closed menu stayed in layout
+   61px wide with every link clipped inside it. Open, it spans the viewport
+   and is fine; closed, it was a phantom box the audit kept reporting as a
+   37px overflow on every page. Closed means gone. */
+.mnav:not([open]) nav{display:none}
 .mnav summary{list-style:none;cursor:pointer;display:grid;place-items:center;
   min-width:44px;min-height:44px;padding:0 12px;font-family:var(--mono);
   font-size:var(--lbl);letter-spacing:.13em;text-transform:uppercase;
@@ -477,9 +492,15 @@ section.raise .panel{background:var(--ink)}
   border-top:1px solid var(--line)}
 .now .k{font-family:var(--mono);font-size:var(--orn);letter-spacing:.17em;
   text-transform:uppercase;color:var(--faint);font-weight:700;white-space:nowrap}
+/* The formation name cycles and the longest of them ran 9px past the stage
+   copy at every width, measured 3 September. The name is the one flexible
+   thing in the row: it shrinks and ellipsises, the label and the dots keep
+   their size. */
+.now{min-width:0}
 .now .v{font-family:var(--display);font-weight:700;font-size:1.08rem;
-  letter-spacing:-.015em;color:var(--mute)}
-.dots{display:flex;gap:6px;margin-left:auto}
+  letter-spacing:-.015em;color:var(--mute);flex:1 1 auto;min-width:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dots{display:flex;gap:6px;margin-left:auto;flex:none}
 /* 6px stays the visual; the target is the ::after. A 6x6 button is a fifth
    of the minimum a finger needs. */
 .dot{width:6px;height:6px;border-radius:50%;background:var(--line-lit);
