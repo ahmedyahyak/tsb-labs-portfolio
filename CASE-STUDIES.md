@@ -20,7 +20,7 @@ Re verify before any future claim that the numbers are current.
 
 | Claim | How to re verify | Result on 23 Aug 2026 |
 |---|---|---|
-| 320 automated checks, clean type check | `cd ~/Projects/jarvis && npm run check` | exit 0, 320 `ok` assertions across 11 suites |
+| 451 automated checks, clean type check | `cd ~/Projects/jarvis && npm run check` | exit 0, 451 `ok` assertions across 17 suites, recounted 3 Sep 2026 |
 | 47 specialist roles | `python3 -c "import json;print(len(json.load(open('roles.json'))['roles']))"` | 47 (Default 1, Commercial 15, Operating 11, Technical 11, Frontier 1, Other 8) |
 | Inbound loop under 60s at $0.159 | `logs/madar-sdr.log`, round 3 entry | detect, brief email, reply email, status write, zero taps |
 | Service revived in 8s | doctor kill test, recorded in project memory | revived via `kickstart` |
