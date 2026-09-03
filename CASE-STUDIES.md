@@ -21,7 +21,7 @@ Re verify before any future claim that the numbers are current.
 | Claim | How to re verify | Result on 23 Aug 2026 |
 |---|---|---|
 | 320 automated checks, clean type check | `cd ~/Projects/jarvis && npm run check` | exit 0, 320 `ok` assertions across 11 suites |
-| 37 specialist roles | `python3 -c "import json;print(len(json.load(open('roles.json'))['roles']))"` | 37 (Commercial 15, Operating 10, Technical 10, Frontier 1, Default 1) |
+| 47 specialist roles | `python3 -c "import json;print(len(json.load(open('roles.json'))['roles']))"` | 47 (Default 1, Commercial 15, Operating 11, Technical 11, Frontier 1, Other 8) |
 | Inbound loop under 60s at $0.159 | `logs/madar-sdr.log`, round 3 entry | detect, brief email, reply email, status write, zero taps |
 | Service revived in 8s | doctor kill test, recorded in project memory | revived via `kickstart` |
 | Agent hired and examined in 93s | `scripts/eval-hr-hires.ts` | passed all three exam questions |
@@ -126,7 +126,7 @@ Found 23 August 2026 while sourcing these case studies. Both are on the live pub
 site and both are honesty problems, which matters more for this house than for most.
 
 1. **Role count is stale.** The Madar OS card says "thirty specialist roles". There
-   are 37 in `roles.json`. Either restate it or drop the number.
+   are 47 in `roles.json`. Either restate it or drop the number.
 2. **A parked project is shown as active.** The gym platform card reads "IN
    DELIVERY". The CRM records it as parked, pending payment received and the brand
    name plus domain being locked. Shipping a public claim that a stalled project is
